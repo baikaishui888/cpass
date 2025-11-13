@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cpass</title>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #0a0f1f;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* 粒子画布 */
+  #particles-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* 页面主容器外壳（新增 UI） */
+  .outer-wrap {
+    backdrop-filter: blur(14px);
+    background: rgba(15,23,42,0.55);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 18px;
+    max-width: 1000px;
+    margin: 60px auto;
+    padding: 40px 28px 80px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.45);
+    animation: fadeUp 1s ease-out;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 以下全部是你原来的 CSS（保留不动） */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0;
+  }
+  .hero { text-align: center; margin-bottom: 42px; }
+  .hero-title {
+    font-size: clamp(38px,6vw,56px);
+    font-weight: 900;
+    background: linear-gradient(90deg,#38bdf8,#22d3ee,#818cf8);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  .hero-sub {
+    margin-top: 12px; font-size: 20px; opacity: .9;
+  }
+  .glass-box {
+    max-width: 780px; margin: 32px auto;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.15);
+    box-shadow: 0 12px 40px rgba(0,0,0,.25);
+    backdrop-filter: blur(12px);
+    padding: 22px 26px;
+    border-radius: 18px;
+    line-height: 1.7; font-size: 16px;
+  }
+  .divider {
+    margin: 46px 0; height: 1px;
+    background: linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+  }
+  .section-title {
+    text-align: center; font-size: 26px;
+    font-weight: 900; margin-bottom: 22px;
+  }
+  .cards {
+    display: grid; gap: 22px;
+    grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+  }
+  .card {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 16px;
+    padding: 20px 22px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 14px 32px rgba(0,0,0,.2);
+  }
+  .card-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .card-text { opacity: .88; font-size: 15px; }
+  .code-block {
+    white-space: pre; padding: 16px; border-radius: 12px;
+    background: rgba(15,23,42,.6); border: 1px solid rgba(255,255,255,.1);
+    overflow-x: auto; margin: 14px 0 24px;
+    font-size: 14px; line-height: 1.7;
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+  }
+  h3 {
+    margin-top: 32px; margin-bottom: 10px;
+    font-size: 20px; font-weight: 800;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- 粒子背景 -->
+<canvas id="particles-bg"></canvas>
+
+<!-- 新 UI 外壳开始 -->
+<div class="outer-wrap">
+<div class="container">
+
+  <!-- 你的内容从这里开始（完全不变） -->
+
+  <div class="hero">
+    <div class="hero-title">Cpass</div>
+    <div class="hero-sub" id="subtitle">一个小而美的 API 中转服务</div>
+  </div>
+
+  <div class="glass-box">
+    <b>¥0.5 = $1 站内额度</b><br>
+    同等预算获得约 <b>2×</b> 配额；适合个人或团队规模化使用。
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-title">为什么选择我们？</div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-title">💸 极致性价比</div>
+      <div class="card-text">按量计费，无最低消耗；账单实时可查，透明可靠。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🧩 一站式聚合</div>
+      <div class="card-text">统一接口即可调用多家模型服务。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🛡️ 高可用架构</div>
+      <div class="card-text">智能路由与自动切换，保障稳定与低延迟。</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-title">🚀 快速开始</div>
+
+  <div class="glass-box">
+    本教程将介绍如何在本平台上使用 Claude Code 与 Codex，包括环境搭建、安装步骤、API 配置以及常见问题说明。
+  </div>
+
+  <h3>1️⃣ 安装 Node.js（版本需 ≥ 18）</h3>
+  <p>Claude Code 与 Codex 均依赖 Node.js，请确保您的系统已安装正确版本。</p>
+  <div class="code-block">
+# Ubuntu / Debian
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
+sudo apt-get install -y nodejs
+
+# macOS
+brew install node
+
+# 验证安装
+node --version
+  </div>
+
+  <h3>2️⃣ 安装 Claude Code</h3>
+  <p>Claude Code 是一个命令行 AI 编程助手，可通过 npm 全局安装：</p>
+  <div class="code-block">
+npm install -g @anthropic-ai/claude-code
+claude --version
+  </div>
+
+  <h3>3️⃣ 获取 API Key 与配置环境变量</h3>
+  <p>登录您的平台账户，在「API 令牌」页面创建一个以 <b>sk-</b> 开头的 Token。</p>
+  <div class="code-block">
+export ANTHROPIC_AUTH_TOKEN=sk-xxxx
+export ANTHROPIC_BASE_URL=https://api.cpass.cc
+
+claude
+  </div>
+
+  <h3>4️⃣ 永久保存环境变量（推荐）</h3>
+  <div class="code-block">
+echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.bashrc
+echo 'export ANTHROPIC_BASE_URL=https://api.cpass.cc' >> ~/.bashrc
+
+echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.zshrc
+echo 'export ANTHROPIC_BASE_URL=https://api.cpass.cc' >> ~/.zshrc
+  </div>
+
+  <h3>5️⃣ 启动并使用 Claude Code</h3>
+  <div class="code-block">
+cd your-project-folder
+claude
+  </div>
+
+  <h3>6️⃣ 使用 OpenAI Codex（可选）</h3>
+  <div class="code-block">
+npm i -g @openai/codex
+codex --version
+  </div>
+
+  <h3>7️⃣ 常见问题（FAQ）</h3>
+  <div class="glass-box">
+    <b>· Invalid API Key？</b><br>
+    请检查环境变量是否写入正确。<br><br>
+    <b>· 显示 offline？</b><br>
+    不影响 API 使用。<br><br>
+    <b>· fetch failed？</b><br>
+    多为网络问题，可尝试代理。<br><br>
+    <b>· 网站登录不了？</b><br>
+    清除本站 Cookie 后重新登录即可。
+  </div>
+
+  <div class="divider"></div>
+
+</div>
+</div>
+
+<script>
+// 打字机特效
+(function(){
+  const el=document.getElementById("subtitle");
+  const text="一个小而美的 API 中转服务";
+  let i=0;
+  el.innerHTML="";
+  function tick(){
+    el.textContent=text.slice(0,i);
+    i++;
+    if(i<=text.length) setTimeout(tick,65);
+  }
+  tick();
+})();
+
+// 粒子背景
+(function(){
+  const canvas=document.getElementById("particles-bg");
+  const ctx=canvas.getContext("2d");
+  let w,h,particles=[];
+
+  function resize(){
+    w=canvas.width=window.innerWidth;
+    h=canvas.height=window.innerHeight;
+    particles=[];
+    for(let i=0;i<120;i++){
+      particles.push({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        vx:(Math.random()-.5)*.4,
+        vy:(Math.random()-.5)*.4,
+        r:Math.random()*1.2+0.3
+      });
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=w; if(p.x>w)p.x=0;
+      if(p.y<0)p.y=h; if(p.y>h)p.y=0;
+
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle="rgba(56,189,248,0.7)";
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw();
+  window.onresize=resize;
+})();
+</script>
+
+</body>
+</html>
