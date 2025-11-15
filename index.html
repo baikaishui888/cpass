@@ -101,6 +101,164 @@
     margin-top: 32px; margin-bottom: 10px;
     font-size: 20px; font-weight: 800;
   }
+
+  /* CodeX 教程样式 */
+  .tutorial-header {
+    text-align: center;
+    margin: 60px 0 40px;
+  }
+  .tutorial-title {
+    font-size: 42px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 8px;
+  }
+  .tutorial-subtitle {
+    font-size: 18px;
+    opacity: 0.85;
+  }
+  .tutorial-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 20px 0;
+  }
+  .step-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 40px 0;
+  }
+  .step-item {
+    text-align: center;
+    flex: 1;
+    max-width: 200px;
+  }
+  .step-number {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: rgba(102, 126, 234, 0.2);
+    border: 2px solid #667eea;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .step-label {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+  .tabs-container {
+    margin: 30px 0;
+  }
+  .tabs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    padding: 12px 32px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .tab:hover {
+    background: rgba(255,255,255,0.12);
+    transform: translateY(-2px);
+  }
+  .tab.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+  }
+  .tab-content {
+    display: none;
+  }
+  .tab-content.active {
+    display: block;
+  }
+  .install-step {
+    background: rgba(255,255,255,0.05);
+    border-left: 4px solid #667eea;
+    padding: 24px;
+    margin: 24px 0;
+    border-radius: 8px;
+  }
+  .install-step h4 {
+    margin: 0 0 16px 0;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .method-option {
+    background: rgba(255,255,255,0.03);
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .method-title {
+    font-weight: 600;
+    color: #38bdf8;
+    margin-bottom: 10px;
+  }
+  .info-box {
+    background: rgba(56, 189, 248, 0.1);
+    border-left: 4px solid #38bdf8;
+    padding: 16px;
+    margin: 16px 0;
+    border-radius: 4px;
+  }
+  .warning-box {
+    background: rgba(251, 191, 36, 0.1);
+    border-left: 4px solid #fbbf24;
+    padding: 16px;
+    margin: 16px 0;
+    border-radius: 4px;
+  }
+  .important-box {
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid #ef4444;
+    padding: 16px;
+    margin: 16px 0;
+    border-radius: 4px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  th {
+    background: rgba(102, 126, 234, 0.2);
+    font-weight: 600;
+  }
+  .config-file {
+    background: rgba(15,23,42,0.8);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 12px 0;
+  }
+  .config-filename {
+    color: #38bdf8;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
 </style>
 </head>
 
@@ -145,73 +303,583 @@
 
   <div class="divider"></div>
 
-  <div class="section-title">🚀 快速开始</div>
-
-  <div class="glass-box">
-    本教程将介绍如何在本平台上使用 Claude Code 与 Codex，包括环境搭建、安装步骤、API 配置以及常见问题说明。
+  <!-- Claude Code 安装教程 -->
+  <div class="tutorial-header">
+    <div class="tutorial-title" style="background: linear-gradient(90deg,#38bdf8,#22d3ee,#818cf8); -webkit-background-clip: text;">Claude Code 安装步骤</div>
+    <div class="tutorial-subtitle">Anthropic 官方命令行 AI 编程助手安装指南</div>
   </div>
 
-  <h3>1️⃣ 安装 Node.js（版本需 ≥ 18）</h3>
-  <p>Claude Code 与 Codex 均依赖 Node.js，请确保您的系统已安装正确版本。</p>
-  <div class="code-block">
-# Ubuntu / Debian
-curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
-sudo apt-get install -y nodejs
-
-# macOS
-brew install node
-
-# 验证安装
-node --version
+  <div class="glass-box" style="text-align: center;">
+    <div class="tutorial-badge" style="background: linear-gradient(90deg,#38bdf8,#22d3ee,#818cf8);">🚀 Claude Code 快速开始</div>
+    <p>企业级 AI 编程助手，Claude 3.5 Sonnet 驱动</p>
   </div>
 
-  <h3>2️⃣ 安装 Claude Code</h3>
-  <p>Claude Code 是一个命令行 AI 编程助手，可通过 npm 全局安装：</p>
-  <div class="code-block">
-npm install -g @anthropic-ai/claude-code
-claude --version
+  <div class="step-indicator">
+    <div class="step-item">
+      <div class="step-number">1</div>
+      <div class="step-label">环境准备</div>
+    </div>
+    <div class="step-item">
+      <div class="step-number">2</div>
+      <div class="step-label">安装配置</div>
+    </div>
+    <div class="step-item">
+      <div class="step-number">3</div>
+      <div class="step-label">开始编程</div>
+    </div>
   </div>
 
-  <h3>3️⃣ 获取 API Key 与配置环境变量</h3>
-  <p>登录您的平台账户，在「API 令牌」页面创建一个以 <b>sk-</b> 开头的 Token。</p>
-  <div class="code-block">
-export ANTHROPIC_AUTH_TOKEN=sk-xxxx
-export ANTHROPIC_BASE_URL=https://api.cpass.cc
+  <div class="tabs-container">
+    <div class="tabs">
+      <div class="tab active" onclick="switchClaudeTab('claude-windows')">🪟 Windows</div>
+      <div class="tab" onclick="switchClaudeTab('claude-macos')">🍎 macOS</div>
+      <div class="tab" onclick="switchClaudeTab('claude-linux')">🐧 Linux</div>
+    </div>
 
-claude
-  </div>
+    <!-- Claude Windows 教程 -->
+    <div id="claude-windows" class="tab-content active">
+      <div class="section-title">🪟 Windows 完整安装教程</div>
 
-  <h3>4️⃣ 永久保存环境变量（推荐）</h3>
-  <div class="code-block">
-echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.bashrc
+      <div class="install-step">
+        <h4>1️⃣ 安装 Node.js（版本需 ≥ 18）</h4>
+
+        <div class="method-option">
+          <div class="method-title">方法一：使用官方安装包（推荐）</div>
+          <ol>
+            <li>访问 <a href="https://nodejs.org" style="color: #38bdf8;">https://nodejs.org</a></li>
+            <li>下载 LTS 版本的 Windows Installer (.msi)</li>
+            <li>运行安装程序，按默认设置完成安装</li>
+            <li>安装程序会自动添加到 PATH 环境变量</li>
+          </ol>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">方法二：使用包管理器</div>
+          <p><b>使用 Winget（Windows 11 或 Windows 10 自带）：</b></p>
+          <div class="code-block">winget install OpenJS.NodeJS.LTS</div>
+
+          <p><b>使用 Chocolatey：</b></p>
+          <div class="code-block">choco install nodejs-lts</div>
+
+          <p><b>使用 Scoop：</b></p>
+          <div class="code-block">scoop install nodejs-lts</div>
+        </div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">node --version
+npm --version</div>
+
+        <div class="info-box">
+          <b>💡 提示：</b> Claude Code 需要 Node.js 18 或更高版本。建议使用 LTS（长期支持）版本以获得最佳稳定性。
+        </div>
+      </div>
+
+      <div class="install-step">
+        <h4>2️⃣ 安装 Claude Code CLI</h4>
+        <p>打开命令提示符（以管理员身份运行）或 PowerShell，执行以下命令：</p>
+        <div class="code-block">npm install -g @anthropic-ai/claude-code</div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">claude --version</div>
+
+        <div class="warning-box">
+          <b>⚠️ 注意：</b>如果遇到权限问题，请确保以管理员身份运行命令提示符。
+        </div>
+      </div>
+
+      <div class="install-step">
+        <h4>3️⃣ 配置 Cpass API</h4>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.1 获取 API Token</h4>
+        <ul>
+          <li>访问 Cpass 控制台</li>
+          <li>注册账户或登录现有账户</li>
+          <li>进入 "API 令牌" 页面</li>
+          <li>点击 "创建新密钥"，创建以 <b>sk-</b> 开头的 Token</li>
+          <li>复制生成的 API Key</li>
+        </ul>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.2 配置环境变量（临时）</h4>
+        <p><b>PowerShell：</b></p>
+        <div class="code-block">$env:ANTHROPIC_AUTH_TOKEN="sk-xxxx"
+$env:ANTHROPIC_BASE_URL="https://api.cpass.cc"</div>
+
+        <p><b>CMD：</b></p>
+        <div class="code-block">set ANTHROPIC_AUTH_TOKEN=sk-xxxx
+set ANTHROPIC_BASE_URL=https://api.cpass.cc</div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.3 永久保存环境变量（推荐）</h4>
+        <p><b>方法一：使用系统设置</b></p>
+        <ol>
+          <li>右键点击"此电脑" → "属性"</li>
+          <li>点击"高级系统设置" → "环境变量"</li>
+          <li>在"用户变量"中点击"新建"</li>
+          <li>添加变量名：<code>ANTHROPIC_AUTH_TOKEN</code>，值：<code>sk-xxxx</code></li>
+          <li>添加变量名：<code>ANTHROPIC_BASE_URL</code>，值：<code>https://api.cpass.cc</code></li>
+        </ol>
+
+        <p><b>方法二：使用 PowerShell（管理员）</b></p>
+        <div class="code-block">[System.Environment]::SetEnvironmentVariable('ANTHROPIC_AUTH_TOKEN', 'sk-xxxx', 'User')
+[System.Environment]::SetEnvironmentVariable('ANTHROPIC_BASE_URL', 'https://api.cpass.cc', 'User')</div>
+      </div>
+
+      <div class="install-step">
+        <h4>4️⃣ 启动 Claude Code</h4>
+        <p>配置完成后，进入到工程目录：</p>
+        <div class="code-block">cd your-project-folder
+claude</div>
+
+        <p><b>首次运行配置：</b></p>
+        <ul>
+          <li>选择您的开发环境配置</li>
+          <li>配置代码生成偏好</li>
+          <li>开始 AI 辅助编程！🚀</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Claude macOS 教程 -->
+    <div id="claude-macos" class="tab-content">
+      <div class="section-title">🍎 macOS 完整安装教程</div>
+
+      <div class="install-step">
+        <h4>1️⃣ 安装 Node.js（版本需 ≥ 18）</h4>
+
+        <div class="method-option">
+          <div class="method-title">方法一：使用 Homebrew（推荐）</div>
+          <p>如果尚未安装 Homebrew，先安装：</p>
+          <div class="code-block">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</div>
+
+          <p>然后安装 Node.js：</p>
+          <div class="code-block">brew install node</div>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">方法二：使用官方安装包</div>
+          <ol>
+            <li>访问 <a href="https://nodejs.org" style="color: #38bdf8;">https://nodejs.org</a></li>
+            <li>下载 macOS Installer (.pkg)</li>
+            <li>运行安装程序，按提示完成安装</li>
+          </ol>
+        </div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">node --version
+npm --version</div>
+      </div>
+
+      <div class="install-step">
+        <h4>2️⃣ 安装 Claude Code CLI</h4>
+        <div class="code-block">npm install -g @anthropic-ai/claude-code</div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">claude --version</div>
+      </div>
+
+      <div class="install-step">
+        <h4>3️⃣ 配置 Cpass API</h4>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.1 获取 API Token</h4>
+        <p>访问 Cpass 控制台，创建以 <b>sk-</b> 开头的 Token。</p>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.2 配置环境变量（临时）</h4>
+        <div class="code-block">export ANTHROPIC_AUTH_TOKEN=sk-xxxx
+export ANTHROPIC_BASE_URL=https://api.cpass.cc</div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.3 永久保存环境变量（推荐）</h4>
+        <p><b>如果使用 Bash：</b></p>
+        <div class="code-block">echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.bashrc
 echo 'export ANTHROPIC_BASE_URL=https://api.cpass.cc' >> ~/.bashrc
+source ~/.bashrc</div>
 
-echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.zshrc
+        <p><b>如果使用 Zsh（macOS 默认）：</b></p>
+        <div class="code-block">echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.zshrc
 echo 'export ANTHROPIC_BASE_URL=https://api.cpass.cc' >> ~/.zshrc
+source ~/.zshrc</div>
+      </div>
+
+      <div class="install-step">
+        <h4>4️⃣ 启动 Claude Code</h4>
+        <div class="code-block">cd your-project-folder
+claude</div>
+      </div>
+    </div>
+
+    <!-- Claude Linux 教程 -->
+    <div id="claude-linux" class="tab-content">
+      <div class="section-title">🐧 Linux 完整安装教程</div>
+
+      <div class="install-step">
+        <h4>1️⃣ 安装 Node.js（版本需 ≥ 18）</h4>
+
+        <div class="method-option">
+          <div class="method-title">Ubuntu / Debian</div>
+          <div class="code-block">curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
+sudo apt-get install -y nodejs</div>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">Fedora / RHEL / CentOS</div>
+          <div class="code-block">curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
+sudo dnf install -y nodejs</div>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">Arch Linux</div>
+          <div class="code-block">sudo pacman -S nodejs npm</div>
+        </div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">node --version
+npm --version</div>
+      </div>
+
+      <div class="install-step">
+        <h4>2️⃣ 安装 Claude Code CLI</h4>
+        <div class="code-block">sudo npm install -g @anthropic-ai/claude-code</div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">claude --version</div>
+      </div>
+
+      <div class="install-step">
+        <h4>3️⃣ 配置 Cpass API</h4>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.1 获取 API Token</h4>
+        <p>访问 Cpass 控制台，创建以 <b>sk-</b> 开头的 Token。</p>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.2 配置环境变量（临时）</h4>
+        <div class="code-block">export ANTHROPIC_AUTH_TOKEN=sk-xxxx
+export ANTHROPIC_BASE_URL=https://api.cpass.cc</div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.3 永久保存环境变量（推荐）</h4>
+        <p><b>如果使用 Bash：</b></p>
+        <div class="code-block">echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.bashrc
+echo 'export ANTHROPIC_BASE_URL=https://api.cpass.cc' >> ~/.bashrc
+source ~/.bashrc</div>
+
+        <p><b>如果使用 Zsh：</b></p>
+        <div class="code-block">echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.zshrc
+echo 'export ANTHROPIC_BASE_URL=https://api.cpass.cc' >> ~/.zshrc
+source ~/.zshrc</div>
+      </div>
+
+      <div class="install-step">
+        <h4>4️⃣ 启动 Claude Code</h4>
+        <div class="code-block">cd your-project-folder
+claude</div>
+      </div>
+    </div>
   </div>
 
-  <h3>5️⃣ 启动并使用 Claude Code</h3>
-  <div class="code-block">
-cd your-project-folder
-claude
+  <div class="divider"></div>
+
+  <!-- CodeX 安装教程 -->
+  <div class="tutorial-header">
+    <div class="tutorial-title">CodeX 安装步骤</div>
+    <div class="tutorial-subtitle">强大的 OpenAI 代码助手安装指南</div>
   </div>
 
-  <h3>6️⃣ 使用 OpenAI Codex（可选）</h3>
-  <div class="code-block">
-npm i -g @openai/codex
-codex --version
+  <div class="glass-box" style="text-align: center;">
+    <div class="tutorial-badge">🚀 CodeX 快速开始</div>
+    <p>企业级 AI 编程助手，GPT-5 驱动</p>
   </div>
 
-  <h3>7️⃣ 常见问题（FAQ）</h3>
-  <div class="glass-box">
-    <b>· Invalid API Key？</b><br>
-    请检查环境变量是否写入正确。<br><br>
-    <b>· 显示 offline？</b><br>
-    不影响 API 使用。<br><br>
-    <b>· fetch failed？</b><br>
-    多为网络问题，可尝试代理。<br><br>
-    <b>· 网站登录不了？</b><br>
-    清除本站 Cookie 后重新登录即可。
+  <div class="step-indicator">
+    <div class="step-item">
+      <div class="step-number">1</div>
+      <div class="step-label">环境准备</div>
+    </div>
+    <div class="step-item">
+      <div class="step-number">2</div>
+      <div class="step-label">安装配置</div>
+    </div>
+    <div class="step-item">
+      <div class="step-number">3</div>
+      <div class="step-label">开始编程</div>
+    </div>
+  </div>
+
+  <div class="tabs-container">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('windows')">🪟 Windows</div>
+      <div class="tab" onclick="switchTab('macos')">🍎 macOS</div>
+      <div class="tab" onclick="switchTab('linux')">🐧 Linux</div>
+    </div>
+
+    <!-- Windows 教程 -->
+    <div id="windows" class="tab-content active">
+      <div class="section-title">🪟 Windows 完整安装教程</div>
+
+      <div class="install-step">
+        <h4>1️⃣ 安装 Node.js</h4>
+
+        <div class="method-option">
+          <div class="method-title">方法一：使用官方安装包（推荐）</div>
+          <ol>
+            <li>访问 <a href="https://nodejs.org" style="color: #38bdf8;">https://nodejs.org</a></li>
+            <li>下载 LTS 版本的 Windows Installer (.msi)</li>
+            <li>运行安装程序，按默认设置完成安装</li>
+            <li>安装程序会自动添加到 PATH 环境变量</li>
+          </ol>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">方法二：使用包管理器</div>
+          <p><b>使用 Winget（Windows 11 或 Windows 10 自带）：</b></p>
+          <div class="code-block">winget install OpenJS.NodeJS.LTS</div>
+
+          <p><b>使用 Chocolatey：</b></p>
+          <div class="code-block">choco install nodejs-lts</div>
+
+          <p><b>使用 Scoop：</b></p>
+          <div class="code-block">scoop install nodejs-lts</div>
+        </div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">node --version
+npm --version</div>
+
+        <div class="info-box">
+          <b>💡 提示：</b> 建议使用 LTS（长期支持）版本以获得最佳稳定性。安装完成后需重启命令行窗口。
+        </div>
+      </div>
+
+      <div class="install-step">
+        <h4>2️⃣ 安装 CodeX CLI</h4>
+        <p>打开命令提示符（以管理员身份运行）或 PowerShell，执行以下命令：</p>
+        <div class="code-block">npm install -g @openai/codex@latest</div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">codex --version</div>
+
+        <div class="warning-box">
+          <b>⚠️ 注意：</b>如果遇到权限问题，请确保以管理员身份运行命令提示符。
+        </div>
+      </div>
+
+      <div class="install-step">
+        <h4>3️⃣ 配置 cpass API</h4>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.1 获取 CodeX 专用 API Token</h4>
+        <ul>
+          <li>访问 cpass 控制台</li>
+          <li>注册账户或登录现有账户</li>
+          <li>进入 "API 密钥" 页面</li>
+          <li>点击 "创建新密钥"，选择 CodeX 专用分组</li>
+          <li>复制生成的 API Key</li>
+        </ul>
+
+        <div class="important-box">
+          <b>🔴 重要：</b>CodeX 需要使用专门的分组令牌，与 Claude Code 的令牌不同！
+        </div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.2 创建配置文件夹</h4>
+        <div class="code-block">mkdir %USERPROFILE%\.codex
+cd %USERPROFILE%\.codex</div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.3 创建配置文件</h4>
+
+        <p><b>1. 创建 config.toml 文件：</b></p>
+        <p>使用记事本或您喜欢的文本编辑器创建 config.toml 文件：</p>
+        <div class="config-file">
+          <div class="config-filename">config.toml</div>
+          <div class="code-block" style="margin: 0;">model_provider = "cpass"
+model = "gpt-5.1-codex"
+model_reasoning_effort = "high"
+network_access = "enabled"
+disable_response_storage = true
+
+[model_providers.cpass]
+name = "cpass"
+base_url = "https://api.cpass.cc/v1"
+wire_api = "responses"
+requires_openai_auth = true</div>
+        </div>
+
+        <p><b>2. 创建 auth.json 文件：</b></p>
+        <p>在同一目录下创建 auth.json 文件：</p>
+        <div class="config-file">
+          <div class="config-filename">auth.json</div>
+          <div class="code-block" style="margin: 0;">{
+  "OPENAI_API_KEY": "粘贴为CodeX专用分组令牌key"
+}</div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <h4>4️⃣ 启动 CodeX</h4>
+        <p>配置完成后，先进入到工程目录：</p>
+        <div class="code-block">mkdir my-codex-project
+cd my-codex-project</div>
+
+        <p>然后，运行以下命令启动：</p>
+        <div class="code-block">codex</div>
+
+        <p><b>首次运行配置：</b></p>
+        <ul>
+          <li>选择您的开发环境配置</li>
+          <li>配置代码生成偏好</li>
+          <li>设置 GPT-5 推理等级</li>
+          <li>开始 AI 辅助编程！🚀</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- macOS 教程 -->
+    <div id="macos" class="tab-content">
+      <div class="section-title">🍎 macOS 完整安装教程</div>
+
+      <div class="install-step">
+        <h4>1️⃣ 安装 Node.js</h4>
+
+        <div class="method-option">
+          <div class="method-title">方法一：使用 Homebrew（推荐）</div>
+          <p>如果尚未安装 Homebrew，先安装：</p>
+          <div class="code-block">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</div>
+
+          <p>然后安装 Node.js：</p>
+          <div class="code-block">brew install node</div>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">方法二：使用官方安装包</div>
+          <ol>
+            <li>访问 <a href="https://nodejs.org" style="color: #38bdf8;">https://nodejs.org</a></li>
+            <li>下载 macOS Installer (.pkg)</li>
+            <li>运行安装程序，按提示完成安装</li>
+          </ol>
+        </div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">node --version
+npm --version</div>
+      </div>
+
+      <div class="install-step">
+        <h4>2️⃣ 安装 CodeX CLI</h4>
+        <div class="code-block">npm install -g @openai/codex@latest</div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">codex --version</div>
+      </div>
+
+      <div class="install-step">
+        <h4>3️⃣ 配置 cpass API</h4>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.1 获取 API Token</h4>
+        <p>访问 cpass 控制台，创建 CodeX 专用分组令牌。</p>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.2 创建配置文件夹</h4>
+        <div class="code-block">mkdir -p ~/.codex
+cd ~/.codex</div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.3 创建配置文件</h4>
+        <p><b>创建 config.toml：</b></p>
+        <div class="code-block">cat > config.toml << 'EOF'
+model_provider = "cpass"
+model = "gpt-5.1-codex"
+model_reasoning_effort = "high"
+network_access = "enabled"
+disable_response_storage = true
+
+[model_providers.cpass]
+name = "cpass"
+base_url = "https://api.cpass.cc/v1"
+wire_api = "responses"
+requires_openai_auth = true
+EOF</div>
+
+        <p><b>创建 auth.json：</b></p>
+        <div class="code-block">cat > auth.json << 'EOF'
+{
+  "OPENAI_API_KEY": "你的CodeX专用Token"
+}
+EOF</div>
+      </div>
+
+      <div class="install-step">
+        <h4>4️⃣ 启动 CodeX</h4>
+        <div class="code-block">mkdir my-codex-project
+cd my-codex-project
+codex</div>
+      </div>
+    </div>
+
+    <!-- Linux 教程 -->
+    <div id="linux" class="tab-content">
+      <div class="section-title">🐧 Linux 完整安装教程</div>
+
+      <div class="install-step">
+        <h4>1️⃣ 安装 Node.js</h4>
+
+        <div class="method-option">
+          <div class="method-title">Ubuntu / Debian</div>
+          <div class="code-block">curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
+sudo apt-get install -y nodejs</div>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">Fedora / RHEL / CentOS</div>
+          <div class="code-block">curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
+sudo dnf install -y nodejs</div>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">Arch Linux</div>
+          <div class="code-block">sudo pacman -S nodejs npm</div>
+        </div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">node --version
+npm --version</div>
+      </div>
+
+      <div class="install-step">
+        <h4>2️⃣ 安装 CodeX CLI</h4>
+        <div class="code-block">sudo npm install -g @openai/codex@latest</div>
+
+        <p><b>验证安装：</b></p>
+        <div class="code-block">codex --version</div>
+      </div>
+
+      <div class="install-step">
+        <h4>3️⃣ 配置 cpass API</h4>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">创建配置文件</h4>
+        <div class="code-block">mkdir -p ~/.codex
+cd ~/.codex
+
+# 创建 config.toml
+cat > config.toml << 'EOF'
+model_provider = "cpass"
+model = "gpt-5.1-codex"
+model_reasoning_effort = "high"
+network_access = "enabled"
+disable_response_storage = true
+
+[model_providers.cpass]
+name = "cpass"
+base_url = "https://api.cpass.cc/v1"
+wire_api = "responses"
+requires_openai_auth = true
+EOF
+
+# 创建 auth.json
+cat > auth.json << 'EOF'
+{
+  "OPENAI_API_KEY": "你的CodeX专用Token"
+}
+EOF</div>
+      </div>
+
+      <div class="install-step">
+        <h4>4️⃣ 启动 CodeX</h4>
+        <div class="code-block">mkdir my-codex-project
+cd my-codex-project
+codex</div>
+      </div>
+    </div>
   </div>
 
   <div class="divider"></div>
@@ -220,6 +888,48 @@ codex --version
 </div>
 
 <script>
+// Claude Code 选项卡切换功能
+function switchClaudeTab(tabName) {
+  // 隐藏所有 Claude 选项卡内容
+  const claudeContents = ['claude-windows', 'claude-macos', 'claude-linux'];
+  claudeContents.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+
+  // 移除所有选项卡的激活状态（仅限 Claude 部分）
+  event.target.parentElement.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // 显示选中的选项卡内容
+  document.getElementById(tabName).classList.add('active');
+
+  // 激活选中的选项卡
+  event.target.classList.add('active');
+}
+
+// CodeX 选项卡切换功能
+function switchTab(tabName) {
+  // 隐藏所有 CodeX 选项卡内容
+  const codexContents = ['windows', 'macos', 'linux'];
+  codexContents.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+
+  // 移除所有选项卡的激活状态（仅限 CodeX 部分）
+  event.target.parentElement.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // 显示选中的选项卡内容
+  document.getElementById(tabName).classList.add('active');
+
+  // 激活选中的选项卡
+  event.target.classList.add('active');
+}
+
 // 打字机特效
 (function(){
   const el=document.getElementById("subtitle");
