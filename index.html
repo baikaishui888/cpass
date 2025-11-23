@@ -884,6 +884,283 @@ codex</div>
 
   <div class="divider"></div>
 
+  <!-- Gemini CLI 安装教程 -->
+  <div class="tutorial-header">
+    <div class="tutorial-title" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc04 100%); -webkit-background-clip: text;">Gemini CLI 安装步骤</div>
+    <div class="tutorial-subtitle">Google AI 编程助手安装指南</div>
+  </div>
+
+  <div class="glass-box" style="text-align: center;">
+    <div class="tutorial-badge" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc04 100%);">🚀 Gemini CLI 快速开始</div>
+    <p>Google AI 编程助手,Gemini 2.5 Pro 驱动</p>
+  </div>
+
+  <div class="step-indicator">
+    <div class="step-item">
+      <div class="step-number">1</div>
+      <div class="step-label">安装 CLI</div>
+    </div>
+    <div class="step-item">
+      <div class="step-number">2</div>
+      <div class="step-label">配置密钥</div>
+    </div>
+    <div class="step-item">
+      <div class="step-number">3</div>
+      <div class="step-label">开始编程</div>
+    </div>
+  </div>
+
+  <div class="tabs-container">
+    <div class="tabs">
+      <div class="tab active" onclick="switchGeminiTab('gemini-windows')">🪟 Windows</div>
+      <div class="tab" onclick="switchGeminiTab('gemini-macos')">🍎 macOS</div>
+      <div class="tab" onclick="switchGeminiTab('gemini-linux')">🐧 Linux</div>
+    </div>
+
+    <!-- Gemini Windows 教程 -->
+    <div id="gemini-windows" class="tab-content active">
+      <div class="section-title">🪟 Windows 完整安装教程</div>
+
+      <div class="install-step">
+        <h4>1️⃣ 安装 Node.js</h4>
+
+        <div class="method-option">
+          <div class="method-title">方法一:使用官方安装包(推荐)</div>
+          <ol>
+            <li>访问 <a href="https://nodejs.org" style="color: #38bdf8;">https://nodejs.org</a></li>
+            <li>下载 LTS 版本的 Windows Installer (.msi)</li>
+            <li>运行安装程序,按默认设置完成安装</li>
+            <li>安装程序会自动添加到 PATH 环境变量</li>
+          </ol>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">方法二:使用包管理器</div>
+          <p><b>使用 Winget(Windows 11 或 Windows 10 自带):</b></p>
+          <div class="code-block">winget install OpenJS.NodeJS.LTS</div>
+
+          <p><b>使用 Chocolatey:</b></p>
+          <div class="code-block">choco install nodejs-lts</div>
+
+          <p><b>使用 Scoop:</b></p>
+          <div class="code-block">scoop install nodejs-lts</div>
+        </div>
+
+        <p><b>验证安装:</b></p>
+        <div class="code-block">node --version
+npm --version</div>
+
+        <div class="info-box">
+          <b>💡 提示:</b> 建议使用 LTS(长期支持)版本以获得最佳稳定性。安装完成后需重启命令行窗口。
+        </div>
+      </div>
+
+      <div class="install-step">
+        <h4>2️⃣ 全局安装 Gemini CLI</h4>
+        <p>打开命令提示符或 PowerShell,执行以下命令:</p>
+        <div class="code-block">npm install -g @google/gemini-cli</div>
+      </div>
+
+      <div class="install-step">
+        <h4>3️⃣ 配置 Gemini CLI</h4>
+
+        <div class="important-box">
+          <b>🔴 重要提示:</b>请将下方的 GEMINI_API_KEY 替换为您在 cpass 控制台 API 令牌页面 生成的 Gemini CLI 专用 API 密钥!
+        </div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.1 创建 .gemini 文件夹</h4>
+        <p><b>配置位置:</b> %USERPROFILE%\.gemini\</p>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.2 创建 .env 文件</h4>
+        <p>在 .gemini 文件夹中创建 .env 文件:</p>
+        <div class="config-file">
+          <div class="config-filename">.env</div>
+          <div class="code-block" style="margin: 0;">GOOGLE_GEMINI_BASE_URL=https://api.cpass.cc
+GEMINI_API_KEY=粘贴为Gemini CLI专用分组令牌key
+GEMINI_MODEL=gemini-3-pro-preview</div>
+        </div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.3 创建 settings.json 文件</h4>
+        <p>在 .gemini 文件夹中创建 settings.json 文件:</p>
+        <div class="config-file">
+          <div class="config-filename">settings.json</div>
+          <div class="code-block" style="margin: 0;">{
+  "ide": {
+    "enabled": true
+  },
+  "security": {
+    "auth": {
+      "selectedType": "gemini-api-key"
+    }
+  }
+}</div>
+        </div>
+
+        <div class="warning-box">
+          <b>⚠️ 注意:</b> 配置文件更加安全且便于管理,需要重启 Gemini CLI 才生效。
+        </div>
+      </div>
+
+      <div class="install-step">
+        <h4>4️⃣ 启动 Gemini CLI</h4>
+        <p>配置完成后,运行以下命令启动:</p>
+        <div class="code-block">gemini</div>
+
+        <p><b>开始使用 Gemini CLI!</b></p>
+        <ul style="list-style: none; padding-left: 0;">
+          <li>• 超大上下文窗口:1M tokens</li>
+          <li>• Agent Mode 自动规划任务</li>
+          <li>• Google Search 实时联网</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Gemini macOS 教程 -->
+    <div id="gemini-macos" class="tab-content">
+      <div class="section-title">🍎 macOS 完整安装教程</div>
+
+      <div class="install-step">
+        <h4>1️⃣ 安装 Node.js</h4>
+
+        <div class="method-option">
+          <div class="method-title">方法一:使用 Homebrew(推荐)</div>
+          <p>如果尚未安装 Homebrew,先安装:</p>
+          <div class="code-block">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</div>
+
+          <p>然后安装 Node.js:</p>
+          <div class="code-block">brew install node</div>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">方法二:使用官方安装包</div>
+          <ol>
+            <li>访问 <a href="https://nodejs.org" style="color: #38bdf8;">https://nodejs.org</a></li>
+            <li>下载 macOS Installer (.pkg)</li>
+            <li>运行安装程序,按提示完成安装</li>
+          </ol>
+        </div>
+
+        <p><b>验证安装:</b></p>
+        <div class="code-block">node --version
+npm --version</div>
+      </div>
+
+      <div class="install-step">
+        <h4>2️⃣ 全局安装 Gemini CLI</h4>
+        <div class="code-block">npm install -g @google/gemini-cli</div>
+      </div>
+
+      <div class="install-step">
+        <h4>3️⃣ 配置 Gemini CLI</h4>
+
+        <div class="important-box">
+          <b>🔴 重要提示:</b>请将 GEMINI_API_KEY 替换为您在 cpass 控制台 API 令牌页面 生成的专用密钥!
+        </div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.1 创建 .gemini 文件夹</h4>
+        <div class="code-block">mkdir -p ~/.gemini
+cd ~/.gemini</div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.2 创建 .env 文件</h4>
+        <div class="code-block">cat > .env << 'EOF'
+GOOGLE_GEMINI_BASE_URL=https://api.cpass.cc
+GEMINI_API_KEY=粘贴为Gemini CLI专用分组令牌key
+GEMINI_MODEL=gemini-3-pro-preview
+EOF</div>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">3.3 创建 settings.json 文件</h4>
+        <div class="code-block">cat > settings.json << 'EOF'
+{
+  "ide": {
+    "enabled": true
+  },
+  "security": {
+    "auth": {
+      "selectedType": "gemini-api-key"
+    }
+  }
+}
+EOF</div>
+      </div>
+
+      <div class="install-step">
+        <h4>4️⃣ 启动 Gemini CLI</h4>
+        <div class="code-block">gemini</div>
+      </div>
+    </div>
+
+    <!-- Gemini Linux 教程 -->
+    <div id="gemini-linux" class="tab-content">
+      <div class="section-title">🐧 Linux 完整安装教程</div>
+
+      <div class="install-step">
+        <h4>1️⃣ 安装 Node.js</h4>
+
+        <div class="method-option">
+          <div class="method-title">Ubuntu / Debian</div>
+          <div class="code-block">curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
+sudo apt-get install -y nodejs</div>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">Fedora / RHEL / CentOS</div>
+          <div class="code-block">curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
+sudo dnf install -y nodejs</div>
+        </div>
+
+        <div class="method-option">
+          <div class="method-title">Arch Linux</div>
+          <div class="code-block">sudo pacman -S nodejs npm</div>
+        </div>
+
+        <p><b>验证安装:</b></p>
+        <div class="code-block">node --version
+npm --version</div>
+      </div>
+
+      <div class="install-step">
+        <h4>2️⃣ 全局安装 Gemini CLI</h4>
+        <div class="code-block">sudo npm install -g @google/gemini-cli</div>
+      </div>
+
+      <div class="install-step">
+        <h4>3️⃣ 配置 Gemini CLI</h4>
+
+        <h4 style="font-size: 18px; margin-top: 20px;">创建配置文件</h4>
+        <div class="code-block">mkdir -p ~/.gemini
+cd ~/.gemini
+
+# 创建 .env
+cat > .env << 'EOF'
+GOOGLE_GEMINI_BASE_URL=https://api.cpass.cc
+GEMINI_API_KEY=粘贴为Gemini CLI专用分组令牌key
+GEMINI_MODEL=gemini-3-pro-preview
+EOF
+
+# 创建 settings.json
+cat > settings.json << 'EOF'
+{
+  "ide": {
+    "enabled": true
+  },
+  "security": {
+    "auth": {
+      "selectedType": "gemini-api-key"
+    }
+  }
+}
+EOF</div>
+      </div>
+
+      <div class="install-step">
+        <h4>4️⃣ 启动 Gemini CLI</h4>
+        <div class="code-block">gemini</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
 </div>
 </div>
 
@@ -919,6 +1196,27 @@ function switchTab(tabName) {
   });
 
   // 移除所有选项卡的激活状态（仅限 CodeX 部分）
+  event.target.parentElement.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // 显示选中的选项卡内容
+  document.getElementById(tabName).classList.add('active');
+
+  // 激活选中的选项卡
+  event.target.classList.add('active');
+}
+
+// Gemini CLI 选项卡切换功能
+function switchGeminiTab(tabName) {
+  // 隐藏所有 Gemini 选项卡内容
+  const geminiContents = ['gemini-windows', 'gemini-macos', 'gemini-linux'];
+  geminiContents.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+
+  // 移除所有选项卡的激活状态（仅限 Gemini 部分）
   event.target.parentElement.querySelectorAll('.tab').forEach(tab => {
     tab.classList.remove('active');
   });
