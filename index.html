@@ -3,52 +3,80 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cpass - 高性能 API 中转服务</title>
+<title>Cpass - Galaxy Network</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
   /* ========================================
-     CSS 变量系统 - 暗黑科技风格配色
+     设计系统 - 极简奢华风格
      ======================================== */
   :root {
-    /* 主色调 - 霓虹色系 */
-    --neon-cyan: #00f5ff;
-    --neon-blue: #38bdf8;
-    --neon-purple: #a855f7;
-    --neon-pink: #f472b6;
-    --neon-green: #22d3ee;
+    /* 单一主色调 - 冷白光 */
+    --white: #ffffff;
+    --white-90: rgba(255, 255, 255, 0.9);
+    --white-70: rgba(255, 255, 255, 0.7);
+    --white-50: rgba(255, 255, 255, 0.5);
+    --white-30: rgba(255, 255, 255, 0.3);
+    --white-20: rgba(255, 255, 255, 0.2);
+    --white-15: rgba(255, 255, 255, 0.15);
+    --white-10: rgba(255, 255, 255, 0.1);
+    --white-06: rgba(255, 255, 255, 0.06);
+    --white-03: rgba(255, 255, 255, 0.03);
 
-    /* 背景色系 */
-    --bg-primary: #050508;
-    --bg-secondary: #0a0a12;
-    --bg-card: rgba(12, 12, 20, 0.85);
-    --bg-card-hover: rgba(20, 20, 35, 0.9);
+    /* 功能色 - 仅用于状态指示 */
+    --status-online: #10b981;
+    --status-warning: #f59e0b;
+    --status-offline: #ef4444;
 
-    /* 文字颜色 */
-    --text-primary: #e2e8f0;
-    --text-secondary: rgba(226, 232, 240, 0.7);
-    --text-muted: rgba(226, 232, 240, 0.5);
+    /* 星云霓虹色 - 用于渐变效果 */
+    --accent-cyan: #00f2fe;
+    --accent-purple: #a18cd1;
 
-    /* 边框和发光 */
-    --border-subtle: rgba(255, 255, 255, 0.06);
-    --border-glow: rgba(56, 189, 248, 0.3);
-    --glow-cyan: 0 0 30px rgba(0, 245, 255, 0.3);
-    --glow-purple: 0 0 30px rgba(168, 85, 247, 0.3);
+    /* 微光强调 - 极其克制 */
+    --glow-soft: rgba(255, 255, 255, 0.08);
+    --glow-medium: rgba(255, 255, 255, 0.15);
 
-    /* 动画时长 */
-    --transition-fast: 0.2s;
-    --transition-normal: 0.4s;
-    --transition-slow: 0.6s;
+    /* 深空背景 */
+    --void: #000000;
+    --surface: rgba(255, 255, 255, 0.02);
+    --surface-hover: rgba(255, 255, 255, 0.04);
 
-    /* 间距 */
-    --spacing-xs: 8px;
-    --spacing-sm: 16px;
-    --spacing-md: 24px;
-    --spacing-lg: 40px;
-    --spacing-xl: 60px;
+    /* 字体 */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+    /* 尺寸系统 - 8px 基准 */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+    --space-24: 96px;
+
+    /* 圆角 */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+
+    /* 动画 */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --duration-fast: 150ms;
+    --duration-normal: 300ms;
+    --duration-slow: 500ms;
   }
 
   /* ========================================
-     基础重置和全局样式
+     基础重置
      ======================================== */
   *, *::before, *::after {
     box-sizing: border-box;
@@ -58,1452 +86,2144 @@
 
   html {
     scroll-behavior: smooth;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-family: var(--font-sans);
+    background: var(--void);
+    color: var(--white-90);
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
   }
 
-  /* 背景网格效果 */
-  body::before {
-    content: '';
+  ::selection {
+    background: var(--white-30);
+    color: var(--white);
+  }
+
+  /* ========================================
+     WebGL 背景
+     ======================================== */
+  #galaxy-canvas {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image:
-      linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
+    inset: 0;
     z-index: 0;
   }
 
-  /* 动态光斑效果 */
-  .glow-orb {
+  /* 顶部渐变遮罩 - 增强层次感 */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 100% 100% at 50% -20%, transparent 50%, var(--void) 100%);
+  }
+
+  /* 星云光斑效果 */
+  .nebula-orb {
     position: fixed;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.4;
-    pointer-events: none;
+    filter: blur(100px);
     z-index: 0;
-    animation: float 20s ease-in-out infinite;
+    opacity: 0.3;
+    pointer-events: none;
+    animation: float 20s infinite alternate ease-in-out;
   }
-
-  .glow-orb-1 {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(0, 245, 255, 0.15) 0%, transparent 70%);
-    top: -200px;
-    right: -200px;
-    animation-delay: 0s;
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: var(--accent-cyan);
+    top: -150px; left: -150px;
   }
-
-  .glow-orb-2 {
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
-    bottom: -150px;
-    left: -150px;
-    animation-delay: -10s;
+  .orb-2 {
+    width: 400px; height: 400px;
+    background: var(--accent-purple);
+    bottom: -100px; right: -100px;
+    animation-delay: -7s;
   }
-
-  .glow-orb-3 {
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(244, 114, 182, 0.1) 0%, transparent 70%);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation-delay: -5s;
+  .orb-3 {
+    width: 300px; height: 300px;
+    background: #f472b6;
+    top: 40%; right: 10%;
+    animation-delay: -12s;
   }
 
   @keyframes float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(30px, -30px) scale(1.05); }
-    50% { transform: translate(-20px, 20px) scale(0.95); }
-    75% { transform: translate(-30px, -20px) scale(1.02); }
-  }
-
-  /* 粒子画布 */
-  #particles-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
+    0% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+    100% { transform: translate(30px, 20px) scale(1.1); opacity: 0.4; }
   }
 
   /* ========================================
-     主容器样式
+     布局容器
      ======================================== */
-  .outer-wrap {
+  .container {
     position: relative;
     z-index: 10;
-    max-width: 1100px;
+    max-width: 960px;
     margin: 0 auto;
-    padding: var(--spacing-xl) var(--spacing-md);
+    padding: var(--space-20) var(--space-6);
   }
 
-  .main-container {
-    background: linear-gradient(135deg, rgba(10, 10, 18, 0.9) 0%, rgba(15, 15, 30, 0.85) 100%);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--border-subtle);
-    border-radius: 24px;
-    padding: var(--spacing-xl) var(--spacing-lg);
-    box-shadow:
-      0 0 80px rgba(0, 0, 0, 0.5),
-      inset 0 0 80px rgba(56, 189, 248, 0.02);
-    animation: containerFadeIn 1s ease-out;
-  }
-
-  @keyframes containerFadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(30px) scale(0.98);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
+  @media (max-width: 640px) {
+    .container {
+      padding: var(--space-12) var(--space-4);
     }
   }
 
   /* ========================================
-     Hero 区域 - 霓虹标题效果
+     Hero 区域
      ======================================== */
   .hero {
     text-align: center;
-    padding: var(--spacing-lg) 0 var(--spacing-xl);
-    position: relative;
+    margin-bottom: var(--space-24);
   }
 
-  /* 装饰环 */
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 400px;
-    height: 400px;
-    transform: translate(-50%, -50%);
-    background: conic-gradient(from 0deg, transparent, rgba(0, 245, 255, 0.1), transparent, rgba(168, 85, 247, 0.1), transparent);
-    border-radius: 50%;
-    animation: rotateSlow 30s linear infinite;
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  @keyframes rotateSlow {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-
+  /* 主标题 */
   .hero-title {
-    font-size: clamp(48px, 8vw, 72px);
-    font-weight: 900;
-    letter-spacing: -2px;
-    background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 25%, var(--neon-purple) 50%, var(--neon-pink) 75%, var(--neon-cyan) 100%);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: gradientFlow 4s ease infinite;
-    position: relative;
-    display: inline-block;
-    text-shadow: 0 0 60px rgba(0, 245, 255, 0.5);
-  }
-
-  /* 霓虹闪烁效果 */
-  .hero-title::after {
-    content: 'Cpass';
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: inherit;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: blur(20px);
-    opacity: 0.6;
-    animation: neonPulse 2s ease-in-out infinite;
-  }
-
-  @keyframes gradientFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  @keyframes neonPulse {
-    0%, 100% { opacity: 0.4; filter: blur(20px); }
-    50% { opacity: 0.8; filter: blur(25px); }
-  }
-
-  .hero-sub {
-    margin-top: var(--spacing-sm);
-    font-size: 20px;
-    color: var(--text-secondary);
-    position: relative;
-  }
-
-  /* 打字机光标 */
-  .hero-sub::after {
-    content: '|';
-    color: var(--neon-cyan);
-    animation: blink 1s step-end infinite;
-    margin-left: 2px;
-  }
-
-  @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-  }
-
-  /* ========================================
-     玻璃态信息卡片
-     ======================================== */
-  .glass-box {
-    max-width: 800px;
-    margin: var(--spacing-md) auto;
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(168, 85, 247, 0.06) 100%);
-    border: 1px solid rgba(56, 189, 248, 0.2);
-    border-radius: 16px;
-    padding: var(--spacing-md) var(--spacing-lg);
-    backdrop-filter: blur(16px);
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      inset 0 0 60px rgba(56, 189, 248, 0.03);
-    text-align: center;
-    line-height: 1.8;
-    position: relative;
-    overflow: hidden;
-    transition: all var(--transition-normal) ease;
-  }
-
-  .glass-box:hover {
-    border-color: rgba(56, 189, 248, 0.4);
-    box-shadow:
-      0 12px 40px rgba(56, 189, 248, 0.15),
-      inset 0 0 60px rgba(56, 189, 248, 0.05);
-    transform: translateY(-2px);
-  }
-
-  .glass-box strong, .glass-box b {
-    color: var(--neon-cyan);
+    font-size: clamp(72px, 15vw, 160px);
     font-weight: 700;
-  }
-
-  /* ========================================
-     快速导航按钮组
-     ======================================== */
-  .quick-nav {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-sm);
-    margin: var(--spacing-lg) 0;
-    flex-wrap: wrap;
-  }
-
-  .quick-nav-btn {
-    position: relative;
-    padding: 14px 28px;
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(168, 85, 247, 0.08) 100%);
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    border-radius: 50px;
-    color: var(--neon-blue);
-    font-weight: 600;
-    font-size: 15px;
-    text-decoration: none;
-    transition: all var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-    cursor: pointer;
-  }
-
-  .quick-nav-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-    opacity: 0;
-    transition: opacity var(--transition-normal);
-    z-index: -1;
-  }
-
-  .quick-nav-btn:hover {
-    color: white;
-    border-color: transparent;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
-  }
-
-  .quick-nav-btn:hover::before {
-    opacity: 1;
-  }
-
-  .quick-nav-btn span {
-    margin-right: 8px;
-    font-size: 18px;
-  }
-
-  /* ========================================
-     分隔线 - 渐变发光
-     ======================================== */
-  .divider {
-    height: 1px;
-    margin: var(--spacing-xl) 0;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(56, 189, 248, 0.3) 20%,
-      rgba(168, 85, 247, 0.4) 50%,
-      rgba(56, 189, 248, 0.3) 80%,
-      transparent 100%);
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    color: var(--white);
+    margin-bottom: var(--space-6);
     position: relative;
   }
 
-  .divider::before {
+  .hero-title::after {
     content: '';
     position: absolute;
-    top: -2px;
+    bottom: -4px;
     left: 50%;
     transform: translateX(-50%);
-    width: 60%;
-    height: 5px;
-    background: inherit;
-    filter: blur(8px);
-    opacity: 0.6;
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--white-30), transparent);
   }
 
-  /* ========================================
-     Section 标题
-     ======================================== */
-  .section-title {
+  /* Morphing Text 效果 */
+  .morphing-container {
+    filter: url(#threshold) blur(0.5px);
+    display: block;
+    position: relative;
     text-align: center;
-    font-size: 28px;
-    font-weight: 800;
-    margin-bottom: var(--spacing-lg);
-    background: linear-gradient(135deg, var(--text-primary) 0%, var(--neon-blue) 100%);
+  }
+
+  .morphing-text {
+    display: inline-block;
+    user-select: none;
+    /* 垂直渐变：白色到深灰色 */
+    background: linear-gradient(180deg, #ffffff 0%, #6b6b6b 100%);
     -webkit-background-clip: text;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
     color: transparent;
   }
 
-  /* ========================================
-     卡片系统 - 3D 悬浮 + 鼠标追踪光效
-     ======================================== */
-  .cards {
-    display: grid;
-    gap: var(--spacing-md);
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  }
-
-  .card {
-    --mouse-x: 50%;
-    --mouse-y: 50%;
-
-    position: relative;
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: 20px;
-    padding: var(--spacing-md) var(--spacing-md);
-    backdrop-filter: blur(12px);
-    transition: all var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
-    transform-style: preserve-3d;
-    cursor: default;
-    overflow: hidden;
-  }
-
-  /* 鼠标追踪光效 */
-  .card::before {
-    content: '';
+  .morphing-text:nth-child(2) {
     position: absolute;
-    top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
-    background: radial-gradient(
-      600px circle at var(--mouse-x) var(--mouse-y),
-      rgba(56, 189, 248, 0.1),
-      transparent 40%
-    );
-    opacity: 0;
-    transition: opacity var(--transition-normal);
-    pointer-events: none;
-    z-index: 0;
   }
 
-  .card:hover::before {
-    opacity: 1;
-  }
-
-  .card:hover {
-    transform: translateY(-8px) rotateX(2deg);
-    border-color: rgba(56, 189, 248, 0.3);
-    box-shadow:
-      0 20px 50px rgba(0, 0, 0, 0.4),
-      0 0 30px rgba(56, 189, 248, 0.1);
-  }
-
-  .card-icon {
-    font-size: 36px;
-    margin-bottom: var(--spacing-sm);
-    display: block;
-  }
-
-  .card-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: var(--spacing-xs);
-    color: var(--text-primary);
-    position: relative;
-    z-index: 1;
-  }
-
-  .card-text {
-    font-size: 15px;
-    color: var(--text-secondary);
-    line-height: 1.7;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ========================================
-     API 分组卡片 - 特殊样式
-     ======================================== */
-  .api-groups-section {
-    margin: var(--spacing-lg) 0;
-  }
-
-  .api-group-card {
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.06) 0%, rgba(168, 85, 247, 0.04) 100%);
-    border: 1px solid rgba(56, 189, 248, 0.15);
-    border-radius: 24px;
-    padding: var(--spacing-lg);
-    backdrop-filter: blur(16px);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
-  }
-
-  .api-group-title {
-    font-size: 32px;
-    font-weight: 900;
-    text-align: center;
-    margin-bottom: var(--spacing-lg);
-    background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .group-item {
-    --mouse-x: 50%;
-    --mouse-y: 50%;
-
-    position: relative;
-    background: rgba(255, 255, 255, 0.03);
-    border-left: 4px solid var(--neon-cyan);
-    padding: var(--spacing-md) var(--spacing-md);
-    margin: var(--spacing-sm) 0;
-    border-radius: 12px;
-    transition: all var(--transition-normal) ease;
-    overflow: hidden;
-  }
-
-  .group-item::before {
-    content: '';
+  /* SVG Filter 隐藏 */
+  .filters {
     position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      400px circle at var(--mouse-x) var(--mouse-y),
-      rgba(56, 189, 248, 0.08),
-      transparent 40%
-    );
-    opacity: 0;
-    transition: opacity var(--transition-normal);
-    pointer-events: none;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
   }
 
-  .group-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-    transform: translateX(8px);
-    border-left-color: var(--neon-purple);
-    box-shadow: 0 8px 24px rgba(56, 189, 248, 0.1);
-  }
-
-  .group-item:hover::before {
-    opacity: 1;
-  }
-
-  .group-name {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--neon-blue);
-    margin-bottom: 6px;
+  /* VaporizeTextCycle 文字蒸发容器 */
+  .vaporize-text-container {
+    width: 100%;
+    max-width: 40rem;
+    height: 6rem;
     position: relative;
-    z-index: 1;
-  }
-
-  .group-desc {
-    font-size: 15px;
-    color: var(--text-secondary);
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ========================================
-     教程区域样式
-     ======================================== */
-  .tutorial-header {
-    text-align: center;
-    margin: var(--spacing-xl) 0 var(--spacing-lg);
-  }
-
-  .tutorial-title {
-    font-size: clamp(32px, 5vw, 42px);
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 50%, var(--neon-purple) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    margin-bottom: var(--spacing-xs);
-  }
-
-  .tutorial-subtitle {
-    font-size: 18px;
-    color: var(--text-secondary);
-  }
-
-  .tutorial-badge {
-    display: inline-block;
-    padding: 10px 24px;
-    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 700;
-    color: white;
-    margin: var(--spacing-sm) 0;
-    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
-  }
-
-  /* 步骤指示器 */
-  .step-indicator {
+    margin: 0 auto;
     display: flex;
     justify-content: center;
-    gap: var(--spacing-lg);
-    margin: var(--spacing-lg) 0;
-    flex-wrap: wrap;
+    align-items: center;
   }
 
-  .step-item {
-    text-align: center;
-    flex: 1;
-    max-width: 180px;
+  #vaporize-canvas {
+    min-width: 30px;
+    min-height: 20px;
+    pointer-events: none;
   }
 
-  .step-number {
-    width: 56px;
-    height: 56px;
-    line-height: 56px;
-    margin: 0 auto var(--spacing-sm);
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(168, 85, 247, 0.2));
-    border: 2px solid var(--neon-cyan);
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--neon-cyan);
-    transition: all var(--transition-normal) ease;
-    box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+  /* 副标题 */
+  .hero-subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--white-50);
+    max-width: 400px;
+    margin: 0 auto var(--space-10);
+    letter-spacing: 0.01em;
   }
 
-  .step-item:hover .step-number {
-    transform: scale(1.1);
-    box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
+  /* 价格展示 */
+  .pricing-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-6);
+    background: var(--surface);
+    border: 1px solid var(--white-06);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    margin-bottom: var(--space-10);
   }
 
-  .step-label {
-    font-size: 14px;
-    color: var(--text-secondary);
+  .pricing-rate {
+    font-size: 13px;
+    color: var(--white-50);
     font-weight: 500;
   }
 
-  /* ========================================
-     选项卡组件 - 现代 Pill 样式
-     ======================================== */
-  .tabs-container {
-    margin: var(--spacing-lg) 0;
+  .pricing-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--white);
+    font-variant-numeric: tabular-nums;
   }
 
-  .tabs {
+  .pricing-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--white-70);
+    background: var(--white-10);
+    padding: var(--space-1) var(--space-3);
+    border-radius: 100px;
+    letter-spacing: 0.03em;
+  }
+
+  /* 导航按钮组 */
+  .nav-group {
     display: flex;
-    gap: 10px;
     justify-content: center;
-    margin-bottom: var(--spacing-lg);
+    gap: var(--space-3);
     flex-wrap: wrap;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 8px;
-    border-radius: 16px;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
   }
 
-  .tab {
-    padding: 12px 28px;
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
     background: transparent;
-    border: none;
-    border-radius: 12px;
+    border: 1px solid var(--white-10);
+    border-radius: 100px;
+    color: var(--white-70);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all var(--duration-normal) var(--ease-out);
     cursor: pointer;
-    transition: all var(--transition-normal) ease;
+  }
+
+  .nav-link:hover {
+    background: var(--white-06);
+    border-color: var(--white-15);
+    color: var(--white);
+  }
+
+  .nav-link-icon {
+    font-size: 14px;
+    opacity: 0.7;
+  }
+
+  /* ========================================
+     分隔线
+     ======================================== */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--white-10), transparent);
+    margin: var(--space-16) 0;
+  }
+
+  /* ========================================
+     Section 通用
+     ======================================== */
+  .section {
+    margin-bottom: var(--space-20);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--space-10);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--white-30);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+  }
+
+  .section-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+
+  /* ========================================
+     API 分组卡片 - 极简网格
+     ======================================== */
+  .api-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--white-06);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  @media (max-width: 640px) {
+    .api-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .api-card {
+    background: var(--surface);
+    padding: var(--space-6);
+    transition: background var(--duration-normal) var(--ease-out);
+    cursor: pointer;
+    position: relative;
+  }
+
+  .api-card:hover {
+    background: var(--surface-hover);
+  }
+
+  .api-card.featured {
+    grid-column: span 2;
+  }
+
+  @media (max-width: 640px) {
+    .api-card.featured {
+      grid-column: span 1;
+    }
+  }
+
+  .api-card-inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .api-card-content {
+    flex: 1;
+  }
+
+  .api-card-name {
     font-size: 15px;
     font-weight: 600;
-    color: var(--text-secondary);
-    position: relative;
-    overflow: hidden;
+    color: var(--white-90);
+    margin-bottom: var(--space-1);
   }
 
-  .tab:hover {
-    color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.05);
+  .api-card-code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--white-30);
+    margin-bottom: var(--space-2);
   }
 
-  .tab.active {
-    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-    color: white;
-    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+  .api-card-desc {
+    font-size: 13px;
+    color: var(--white-50);
+    line-height: 1.5;
   }
 
-  .tab-content {
-    display: none;
-    animation: tabFadeIn 0.4s ease;
-  }
-
-  .tab-content.active {
-    display: block;
-  }
-
-  @keyframes tabFadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ========================================
-     安装步骤卡片
-     ======================================== */
-  .install-step {
-    background: rgba(255, 255, 255, 0.03);
-    border-left: 4px solid var(--neon-purple);
-    padding: var(--spacing-md);
-    margin: var(--spacing-md) 0;
-    border-radius: 12px;
-    transition: all var(--transition-normal) ease;
-  }
-
-  .install-step:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-left-color: var(--neon-cyan);
-  }
-
-  .install-step h4 {
-    margin: 0 0 var(--spacing-sm) 0;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-
-  .method-option {
-    background: rgba(0, 0, 0, 0.2);
-    padding: var(--spacing-sm);
-    margin: var(--spacing-sm) 0;
-    border-radius: 10px;
-    border: 1px solid var(--border-subtle);
-  }
-
-  .method-title {
+  .api-card-tag {
+    font-size: 10px;
     font-weight: 600;
-    color: var(--neon-blue);
-    margin-bottom: var(--spacing-xs);
+    color: var(--white-50);
+    background: var(--white-06);
+    padding: var(--space-1) var(--space-2);
+    border-radius: 4px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 
-  /* ========================================
-     代码块 - 终端风格
-     ======================================== */
+  .api-card-tag.recommended {
+    background: var(--white-10);
+    color: var(--white-70);
+  }
+
+  /* 方法块 */
+  .method {
+    margin-bottom: var(--space-5);
+  }
+
+  .method:last-child {
+    margin-bottom: 0;
+  }
+
+  .method-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--white-50);
+    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .method-label::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: var(--white-30);
+    border-radius: 50%;
+  }
+
+  /* 代码块 */
   .code-block {
     position: relative;
-    background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    margin: var(--spacing-sm) 0;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--white-06);
+    border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
-  /* 终端头部 */
-  .code-block::before {
-    content: '';
-    display: block;
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    background-image: radial-gradient(circle at 16px 50%, #ff5f56 6px, transparent 6px),
-                      radial-gradient(circle at 36px 50%, #ffbd2e 6px, transparent 6px),
-                      radial-gradient(circle at 56px 50%, #27ca40 6px, transparent 6px);
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--white-06);
   }
 
-  .code-block code {
-    display: block;
-    padding: var(--spacing-sm);
-    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-    font-size: 14px;
-    line-height: 1.8;
-    color: #e2e8f0;
-    white-space: pre;
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .code-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--white-10);
+  }
+
+  .code-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--white-30);
+  }
+
+  .copy-btn {
+    padding: var(--space-1) var(--space-3);
+    background: transparent;
+    border: 1px solid var(--white-10);
+    border-radius: var(--radius-sm);
+    color: var(--white-50);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--duration-fast);
+  }
+
+  .copy-btn:hover {
+    background: var(--white-06);
+    border-color: var(--white-15);
+    color: var(--white-70);
+  }
+
+  .copy-btn.copied {
+    background: var(--status-online);
+    border-color: var(--status-online);
+    color: var(--white);
+  }
+
+  .code-body {
+    padding: var(--space-4);
     overflow-x: auto;
   }
 
-  /* 复制按钮 */
-  .code-block .copy-btn {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    padding: 6px 12px;
-    background: rgba(56, 189, 248, 0.2);
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    border-radius: 6px;
-    color: var(--neon-cyan);
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-fast) ease;
-    opacity: 0;
+  .code-body code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--white-70);
+    white-space: pre;
+    display: block;
   }
 
-  .code-block:hover .copy-btn {
-    opacity: 1;
+  /* 提示框 */
+  .notice {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-4);
   }
 
-  .code-block .copy-btn:hover {
-    background: var(--neon-cyan);
-    color: var(--bg-primary);
-  }
-
-  .code-block .copy-btn.copied {
-    background: #22c55e;
-    border-color: #22c55e;
-    color: white;
-  }
-
-  /* ========================================
-     提示框样式
-     ======================================== */
-  .info-box, .warning-box, .important-box {
-    padding: var(--spacing-sm);
-    margin: var(--spacing-sm) 0;
-    border-radius: 10px;
+  .notice-icon {
     font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
   }
 
-  .info-box {
-    background: rgba(56, 189, 248, 0.1);
-    border-left: 4px solid var(--neon-blue);
+  .notice-text {
+    font-size: 13px;
+    color: var(--white-50);
+    line-height: 1.5;
   }
 
-  .warning-box {
-    background: rgba(251, 191, 36, 0.1);
-    border-left: 4px solid #fbbf24;
+  .notice-text strong {
+    color: var(--white-70);
+    font-weight: 500;
   }
 
-  .important-box {
-    background: rgba(239, 68, 68, 0.1);
-    border-left: 4px solid #ef4444;
+  .notice.warning {
+    border-left: 2px solid var(--status-warning);
   }
 
-  /* ========================================
-     配置文件块
-     ======================================== */
-  .config-file {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid var(--border-subtle);
-    border-radius: 10px;
-    padding: var(--spacing-sm);
-    margin: var(--spacing-sm) 0;
+  .notice.info {
+    border-left: 2px solid var(--white-30);
   }
 
-  .config-filename {
-    color: var(--neon-cyan);
-    font-weight: 600;
-    font-size: 14px;
-    margin-bottom: var(--spacing-xs);
-    font-family: 'JetBrains Mono', monospace;
+  /* 列表 */
+  .list {
+    list-style: none;
+    margin: var(--space-3) 0;
   }
 
-  .config-file .code-block {
-    margin: 0;
-  }
-
-  /* ========================================
-     表格样式
-     ======================================== */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: var(--spacing-md) 0;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  th, td {
-    padding: 14px 16px;
-    text-align: left;
-    border: 1px solid var(--border-subtle);
-  }
-
-  th {
-    background: rgba(56, 189, 248, 0.1);
-    font-weight: 600;
-    color: var(--neon-blue);
-  }
-
-  tr:hover td {
-    background: rgba(255, 255, 255, 0.02);
-  }
-
-  /* ========================================
-     链接样式
-     ======================================== */
-  a {
-    color: var(--neon-cyan);
-    text-decoration: none;
+  .list li {
     position: relative;
-    transition: color var(--transition-fast) ease;
+    padding-left: var(--space-4);
+    margin-bottom: var(--space-2);
+    font-size: 13px;
+    color: var(--white-50);
+    line-height: 1.5;
   }
 
-  a:hover {
-    color: var(--neon-purple);
-  }
-
-  /* 下划线动画 */
-  .install-step a::after {
+  .list li::before {
     content: '';
     position: absolute;
-    bottom: -2px;
     left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
-    transition: width var(--transition-normal) ease;
+    top: 8px;
+    width: 4px;
+    height: 4px;
+    background: var(--white-20);
+    border-radius: 50%;
   }
 
-  .install-step a:hover::after {
-    width: 100%;
+  .list a {
+    color: var(--white-70);
+    text-decoration: none;
+    border-bottom: 1px solid var(--white-15);
+    transition: all var(--duration-fast);
+  }
+
+  .list a:hover {
+    color: var(--white);
+    border-bottom-color: var(--white-30);
+  }
+
+  /* 配置文件 */
+  .config-file {
+    margin-top: var(--space-4);
+  }
+
+  .config-name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--white-50);
+    margin-bottom: var(--space-2);
   }
 
   /* ========================================
-     滚动动画类
+     Footer
      ======================================== */
-  .animate-on-scroll {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  footer {
+    text-align: center;
+    padding: var(--space-12) 0 var(--space-8);
+    border-top: 1px solid var(--white-06);
   }
 
-  .animate-on-scroll.visible {
-    opacity: 1;
-    transform: translateY(0);
+  .footer-logo {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white-30);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-2);
   }
 
-  /* 依次入场延迟 */
-  .stagger-1 { transition-delay: 0.1s; }
-  .stagger-2 { transition-delay: 0.2s; }
-  .stagger-3 { transition-delay: 0.3s; }
-  .stagger-4 { transition-delay: 0.4s; }
-  .stagger-5 { transition-delay: 0.5s; }
-  .stagger-6 { transition-delay: 0.6s; }
+  .footer-text {
+    font-size: 12px;
+    color: var(--white-30);
+  }
 
   /* ========================================
-     响应式设计
+     响应式
      ======================================== */
-  @media (max-width: 768px) {
-    .outer-wrap {
-      padding: var(--spacing-md) var(--spacing-sm);
-    }
-
-    .main-container {
-      padding: var(--spacing-lg) var(--spacing-md);
-      border-radius: 20px;
-    }
-
+  @media (max-width: 640px) {
     .hero-title {
-      font-size: clamp(36px, 10vw, 48px);
+      letter-spacing: -0.02em;
     }
 
-    .quick-nav {
+    .nav-group {
       flex-direction: column;
       align-items: center;
     }
 
-    .quick-nav-btn {
+    .nav-link {
       width: 100%;
-      max-width: 300px;
-      text-align: center;
-    }
-
-    .cards {
-      grid-template-columns: 1fr;
-    }
-
-    .tabs {
-      flex-direction: column;
-      width: 100%;
-    }
-
-    .tab {
-      width: 100%;
-    }
-
-    .step-indicator {
-      gap: var(--spacing-md);
-    }
-
-    .step-item {
-      max-width: 100px;
-    }
-
-    .glow-orb-1, .glow-orb-2, .glow-orb-3 {
-      display: none;
+      max-width: 240px;
+      justify-content: center;
     }
   }
 
   /* ========================================
-     自定义滚动条
+     滚动条
      ======================================== */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple));
-    border-radius: 4px;
+    background: var(--white-15);
+    border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--neon-cyan);
+    background: var(--white-30);
   }
 
   /* ========================================
-     列表样式优化
+     进入动画
      ======================================== */
-  ol, ul {
-    padding-left: var(--spacing-md);
-    margin: var(--spacing-sm) 0;
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
   }
 
-  li {
-    margin: var(--spacing-xs) 0;
-    color: var(--text-secondary);
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 
-  li::marker {
-    color: var(--neon-cyan);
+  .delay-1 { transition-delay: 0.1s; }
+  .delay-2 { transition-delay: 0.2s; }
+  .delay-3 { transition-delay: 0.3s; }
+  .delay-4 { transition-delay: 0.4s; }
+
+  /* ========================================
+     教程导航系统 - 工业风格版本
+     ======================================== */
+
+  /* 主容器 */
+  .tutorial-navigator {
+    margin-bottom: var(--space-20);
   }
 
-  /* h3 样式 */
-  h3 {
-    margin-top: var(--spacing-lg);
-    margin-bottom: var(--spacing-sm);
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--text-primary);
+  /* 标题区域 - 技术风格 */
+  .tutorial-nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: var(--space-8) 0 var(--space-6);
+    border-bottom: 1px solid var(--white-10);
+    margin-bottom: var(--space-6);
+  }
+
+  .tutorial-nav-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .tutorial-nav-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--white-30);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .tutorial-nav-title {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+
+  .tutorial-nav-status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--white-30);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .tutorial-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--status-online);
+    animation: statusBlink 2s steps(2, start) infinite;
+  }
+
+  @keyframes statusBlink {
+    50% { opacity: 0.3; }
+  }
+
+  /* 产品选择器 - 工业风格标签 */
+  .product-selector {
+    display: flex;
+    border: 1px solid var(--white-10);
+    background: var(--surface);
+    width: fit-content;
+    margin-bottom: var(--space-4);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .product-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    background: var(--white-03);
+    border: none;
+    border-right: 1px solid var(--white-10);
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--ease-out);
+    color: var(--white-50);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  .product-btn:last-child {
+    border-right: none;
+  }
+
+  .product-btn:hover {
+    background: var(--white-06);
+    color: var(--white-70);
+  }
+
+  .product-btn.active {
+    background: var(--white);
+    color: var(--void);
+    font-weight: 600;
+  }
+
+  .product-btn-index {
+    font-size: 10px;
+    opacity: 0.5;
+  }
+
+  .product-btn.active .product-btn-index {
+    opacity: 0.7;
+  }
+
+  /* 系统选择器 - 紧凑按钮组 */
+  .system-selector {
+    display: flex;
+    border: 1px solid var(--white-10);
+    background: var(--surface);
+    width: fit-content;
+    margin-bottom: var(--space-6);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .system-btn {
+    padding: var(--space-3) var(--space-5);
+    background: var(--white-03);
+    border: none;
+    border-right: 1px solid var(--white-10);
+    cursor: pointer;
+    transition: all var(--duration-fast);
+    color: var(--white-50);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .system-btn:last-child {
+    border-right: none;
+  }
+
+  .system-btn:hover {
+    color: var(--white-70);
+    background: var(--white-06);
+  }
+
+  .system-btn.active {
+    background: var(--white);
+    color: var(--void);
+    font-weight: 600;
+  }
+
+  /* 内容视口 - 与分组卡片一致的背景 */
+  .content-viewport {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  /* 视口顶部标签 - 隐藏 */
+  .content-viewport::before {
+    display: none;
+  }
+
+  .content-panel {
+    display: none;
+    padding: var(--space-8);
+    animation: panelFadeIn 0.3s var(--ease-out);
+  }
+
+  .content-panel.active {
+    display: block;
+  }
+
+  @keyframes panelFadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 步骤行 - 带连接线 */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: var(--space-5);
+    position: relative;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  /* 步骤之间的连接线 */
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 48px;
+    bottom: -1px;
+    width: 1px;
+    background: var(--white-10);
+  }
+
+  .step:hover::after {
+    background: var(--accent-cyan);
+    opacity: 0.3;
+  }
+
+  /* 步骤序号 */
+  .step-number {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border: 1px solid var(--white-10);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white-50);
+    position: relative;
+    z-index: 1;
+    transition: all var(--duration-normal);
+    border-radius: 0;
+  }
+
+  .step:hover .step-number {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+  }
+
+  .step.active .step-number {
+    background: var(--white);
+    color: var(--void);
+    border-color: var(--white);
+  }
+
+  /* 步骤内容区 */
+  .step-header {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .step-header:hover {
+    background: transparent;
+  }
+
+  .step-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white-90);
+    flex: 1;
+  }
+
+  .step-toggle {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white-30);
+    font-size: 10px;
+    font-family: var(--font-mono);
+    transition: transform var(--duration-normal) var(--ease-out);
+  }
+
+  .step.active .step-toggle {
+    transform: rotate(180deg);
+    color: var(--accent-cyan);
+  }
+
+  .step-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--duration-slow) var(--ease-out);
+  }
+
+  .step.active .step-body {
+    max-height: 2000px;
+  }
+
+  .step-content {
+    padding: var(--space-4) 0 var(--space-8);
+  }
+
+  /* 跃迁动画 */
+  .warp-transition {
+    animation: warpEffect 0.3s var(--ease-out);
+  }
+
+  @keyframes warpEffect {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* 响应式 - 教程导航 */
+  @media (max-width: 640px) {
+    .tutorial-nav-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-4);
+    }
+
+    .product-selector {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .product-btn {
+      border-right: none;
+      border-bottom: 1px solid var(--white-10);
+    }
+
+    .product-btn:last-child {
+      border-bottom: none;
+    }
+
+    .system-selector {
+      width: 100%;
+    }
+
+    .system-btn {
+      flex: 1;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .content-panel {
+      padding: var(--space-5);
+    }
+
+    .step {
+      grid-template-columns: 40px 1fr;
+      gap: var(--space-4);
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      font-size: 12px;
+    }
+
+    .step:not(:last-child)::after {
+      left: 20px;
+      top: 40px;
+    }
   }
 </style>
 </head>
 
 <body>
 
-<!-- 动态光斑背景 -->
-<div class="glow-orb glow-orb-1"></div>
-<div class="glow-orb glow-orb-2"></div>
-<div class="glow-orb glow-orb-3"></div>
+<!-- WebGL Galaxy Background -->
+<canvas id="galaxy-canvas"></canvas>
 
-<!-- 粒子背景画布 -->
-<canvas id="particles-bg"></canvas>
+<!-- 星云光斑效果 -->
+<div class="nebula-orb orb-1"></div>
+<div class="nebula-orb orb-2"></div>
+<div class="nebula-orb orb-3"></div>
 
-<!-- 主内容区域 -->
-<div class="outer-wrap">
-<div class="main-container">
+<!-- Vignette Overlay -->
+<div class="vignette"></div>
 
-  <!-- Hero 区域 -->
-  <div class="hero animate-on-scroll">
-    <div class="hero-title">Cpass</div>
-    <div class="hero-sub" id="subtitle"></div>
-  </div>
+<!-- Main Container -->
+<div class="container">
 
-  <!-- 价格信息卡片 -->
-  <div class="glass-box animate-on-scroll">
-    <b>¥0.5 = $1 站内额度</b><br>
-    同等预算获得约 <b>2×</b> 配额；适合个人或团队规模化使用。
-  </div>
+  <!-- ==================== Hero ==================== -->
+  <header class="hero fade-in">
 
-  <!-- 快速导航 -->
-  <div class="quick-nav animate-on-scroll">
-    <a href="#api-groups" class="quick-nav-btn"><span>📋</span>API 分组说明</a>
-    <a href="#claude-tutorial" class="quick-nav-btn"><span>🤖</span>Claude Code 教程</a>
-    <a href="#codex-tutorial" class="quick-nav-btn"><span>💻</span>CodeX 教程</a>
-    <a href="#gemini-tutorial" class="quick-nav-btn"><span>✨</span>Gemini CLI 教程</a>
-  </div>
+    <!-- Title with Morphing Effect -->
+    <h1 class="hero-title morphing-container">
+      <span id="text1" class="morphing-text"></span>
+      <span id="text2" class="morphing-text"></span>
+    </h1>
+
+    <!-- SVG Filter for Morphing Effect -->
+    <svg class="filters" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <filter id="threshold">
+          <feColorMatrix in="SourceGraphic" type="matrix"
+            values="1 0 0 0 0
+                    0 1 0 0 0
+                    0 0 1 0 0
+                    0 0 0 255 -140"/>
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- VaporizeTextCycle 文字蒸发效果 -->
+    <div id="vaporize-text-container" class="vaporize-text-container">
+      <canvas id="vaporize-canvas"></canvas>
+    </div>
+
+    <!-- Subtitle -->
+    <p class="hero-subtitle">
+      高性能 API 路由系统，连接全球顶尖 AI 模型
+    </p>
+
+    <!-- Pricing -->
+    <div class="pricing-badge">
+      <span class="pricing-rate">Rate</span>
+      <span class="pricing-value">¥0.5 = $1</span>
+      <span class="pricing-tag">200%</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-group">
+      <a href="#api" class="nav-link">
+        <span class="nav-link-icon">◈</span>
+        <span>API 分组</span>
+      </a>
+      <a href="#tutorial" class="nav-link" onclick="switchProduct('claude')">
+        <span class="nav-link-icon">◇</span>
+        <span>Claude Code</span>
+      </a>
+      <a href="#tutorial" class="nav-link" onclick="switchProduct('codex')">
+        <span class="nav-link-icon">◆</span>
+        <span>CodeX</span>
+      </a>
+    </nav>
+
+  </header>
 
   <div class="divider"></div>
 
-  <!-- API 分组说明区域 -->
-  <div id="api-groups" class="api-groups-section animate-on-scroll">
-    <div class="api-group-card">
-      <div class="api-group-title">🎯 API 分组说明</div>
+  <!-- ==================== API Groups ==================== -->
+  <section id="api" class="section fade-in delay-1">
+    <div class="section-header">
+      <p class="section-label">API Endpoints</p>
+      <h2 class="section-title">分组说明</h2>
+    </div>
 
-      <div class="group-item stagger-1 animate-on-scroll">
-        <div class="group-name">"claude code" - CC 专用分组</div>
-        <div class="group-desc">Claude Code CLI 专用，坊间传闻适合写后端代码</div>
+    <div class="api-grid">
+      <div class="api-card featured">
+        <div class="api-card-inner">
+          <div class="api-card-content">
+            <h3 class="api-card-name">Claude Code 专用</h3>
+            <p class="api-card-code">"claude code"</p>
+            <p class="api-card-desc">Claude Code CLI 专用分组，针对后端代码生成深度优化</p>
+          </div>
+          <span class="api-card-tag recommended">推荐</span>
+        </div>
       </div>
 
-      <div class="group-item stagger-2 animate-on-scroll">
-        <div class="group-name">"Gemini CLI" - Gemini CLI 专用分组</div>
-        <div class="group-desc">Gemini CLI 专用，坊间传闻适合写前端代码</div>
+      <div class="api-card">
+        <div class="api-card-inner">
+          <div class="api-card-content">
+            <h3 class="api-card-name">CodeX 专用</h3>
+            <p class="api-card-code">"codex"</p>
+            <p class="api-card-desc">适合文档编写和深度分析</p>
+          </div>
+          <span class="api-card-tag">热门</span>
+        </div>
       </div>
 
-      <div class="group-item stagger-3 animate-on-scroll">
-        <div class="group-name">"codex" - Codex 专用分组</div>
-        <div class="group-desc">Codex CLI 专用，坊间传闻适合写文档和深度分析项目</div>
+      <div class="api-card">
+        <div class="api-card-inner">
+          <div class="api-card-content">
+            <h3 class="api-card-name">CC 特价分组</h3>
+            <p class="api-card-code">"cc_special"</p>
+            <p class="api-card-desc">无缓存，所有客户端可用</p>
+          </div>
+        </div>
       </div>
 
-      <div class="group-item stagger-4 animate-on-scroll">
-        <div class="group-name">"cc_special" - CC 特价分组</div>
-        <div class="group-desc">无缓存，所有客户端可用</div>
+      <div class="api-card">
+        <div class="api-card-inner">
+          <div class="api-card-content">
+            <h3 class="api-card-name">GLM 4.6</h3>
+            <p class="api-card-code">"glm-4.6"</p>
+            <p class="api-card-desc">转 CC 无需更换模型</p>
+          </div>
+        </div>
       </div>
 
-      <div class="group-item stagger-5 animate-on-scroll">
-        <div class="group-name">"default" - 通用线路</div>
-        <div class="group-desc">无缓存，所有客户端可用，不推荐，低维护</div>
-      </div>
-
-      <div class="group-item stagger-6 animate-on-scroll">
-        <div class="group-name">"glm-4.6" - GLM 4.6 专用分组</div>
-        <div class="group-desc">转 CC 无需更换模型即可使用，坊间传闻我也不知道他能干嘛</div>
+      <div class="api-card">
+        <div class="api-card-inner">
+          <div class="api-card-content">
+            <h3 class="api-card-name">通用线路</h3>
+            <p class="api-card-code">"default"</p>
+            <p class="api-card-desc">无缓存，低维护</p>
+          </div>
+          <span class="api-card-tag">备用</span>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <div class="divider"></div>
 
-  <!-- 为什么选择我们 -->
-  <div class="section-title animate-on-scroll">为什么选择我们？</div>
-  <div class="cards">
-    <div class="card stagger-1 animate-on-scroll">
-      <span class="card-icon">💸</span>
-      <div class="card-title">极致性价比</div>
-      <div class="card-text">按量计费，无最低消耗；账单实时可查，透明可靠。</div>
-    </div>
-    <div class="card stagger-2 animate-on-scroll">
-      <span class="card-icon">🧩</span>
-      <div class="card-title">一站式聚合</div>
-      <div class="card-text">统一接口即可调用多家模型服务。</div>
-    </div>
-    <div class="card stagger-3 animate-on-scroll">
-      <span class="card-icon">🛡️</span>
-      <div class="card-title">高可用架构</div>
-      <div class="card-text">智能路由与自动切换，保障稳定与低延迟。</div>
-    </div>
-  </div>
+  <!-- ==================== 教程导航系统 - 工业风格版本 ==================== -->
+  <section id="tutorial" class="tutorial-navigator fade-in delay-2">
 
-  <div class="divider"></div>
-
-  <!-- Claude Code 安装教程 -->
-  <div id="claude-tutorial" class="tutorial-header animate-on-scroll">
-    <div class="tutorial-title">Claude Code 安装步骤</div>
-    <div class="tutorial-subtitle">Anthropic 官方命令行 AI 编程助手安装指南</div>
-  </div>
-
-  <div class="glass-box animate-on-scroll" style="text-align: center;">
-    <div class="tutorial-badge">🚀 Claude Code 快速开始</div>
-    <p>企业级 AI 编程助手，Claude 3.5 Sonnet 驱动</p>
-  </div>
-
-  <div class="step-indicator animate-on-scroll">
-    <div class="step-item">
-      <div class="step-number">1</div>
-      <div class="step-label">环境准备</div>
-    </div>
-    <div class="step-item">
-      <div class="step-number">2</div>
-      <div class="step-label">安装配置</div>
-    </div>
-    <div class="step-item">
-      <div class="step-number">3</div>
-      <div class="step-label">开始编程</div>
-    </div>
-  </div>
-
-  <div class="tabs-container animate-on-scroll">
-    <div class="tabs" id="claude-tabs">
-      <div class="tab active" onclick="switchClaudeTab('claude-windows')">🪟 Windows</div>
-      <div class="tab" onclick="switchClaudeTab('claude-macos')">🍎 macOS</div>
-      <div class="tab" onclick="switchClaudeTab('claude-linux')">🐧 Linux</div>
-    </div>
-
-    <!-- Claude Windows 教程 -->
-    <div id="claude-windows" class="tab-content active">
-      <div class="section-title">🪟 Windows 完整安装教程</div>
-
-      <div class="install-step">
-        <h4>1️⃣ 安装 Node.js（版本需 ≥ 18）</h4>
-
-        <div class="method-option">
-          <div class="method-title">方法一：使用官方安装包（推荐）</div>
-          <ol>
-            <li>访问 <a href="https://nodejs.org" target="_blank">https://nodejs.org</a></li>
-            <li>下载 LTS 版本的 Windows Installer (.msi)</li>
-            <li>运行安装程序，按默认设置完成安装</li>
-            <li>安装程序会自动添加到 PATH 环境变量</li>
-          </ol>
-        </div>
-
-        <div class="method-option">
-          <div class="method-title">方法二：使用包管理器</div>
-          <p><b>使用 Winget（Windows 11 或 Windows 10 自带）：</b></p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>winget install OpenJS.NodeJS.LTS</code></div>
-
-          <p><b>使用 Chocolatey：</b></p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>choco install nodejs-lts</code></div>
-
-          <p><b>使用 Scoop：</b></p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>scoop install nodejs-lts</code></div>
-        </div>
-
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>node --version
-npm --version</code></div>
-
-        <div class="info-box">
-          <b>💡 提示：</b> Claude Code 需要 Node.js 18 或更高版本。建议使用 LTS（长期支持）版本以获得最佳稳定性。
-        </div>
+    <!-- 标题区域 -->
+    <div class="tutorial-nav-header">
+      <div class="tutorial-nav-left">
+        <p class="tutorial-nav-label">安装指南</p>
+        <h2 class="tutorial-nav-title">快速启动</h2>
       </div>
-
-      <div class="install-step">
-        <h4>2️⃣ 安装 Claude Code CLI</h4>
-        <p>打开命令提示符（以管理员身份运行）或 PowerShell，执行以下命令：</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>npm install -g @anthropic-ai/claude-code</code></div>
-
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>claude --version</code></div>
-
-        <div class="warning-box">
-          <b>⚠️ 注意：</b>如果遇到权限问题，请确保以管理员身份运行命令提示符。
-        </div>
-      </div>
-
-      <div class="install-step">
-        <h4>3️⃣ 配置 Cpass API</h4>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.1 获取 API Token</h4>
-        <ul>
-          <li>访问 Cpass 控制台</li>
-          <li>注册账户或登录现有账户</li>
-          <li>进入 "API 令牌" 页面</li>
-          <li>点击 "创建新密钥"，创建以 <b>sk-</b> 开头的 Token</li>
-          <li>复制生成的 API Key</li>
-        </ul>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.2 配置环境变量（临时）</h4>
-        <p><b>PowerShell：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>$env:ANTHROPIC_AUTH_TOKEN="sk-xxxx"
-$env:ANTHROPIC_BASE_URL="https://api.cpass.cc"</code></div>
-
-        <p><b>CMD：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>set ANTHROPIC_AUTH_TOKEN=sk-xxxx
-set ANTHROPIC_BASE_URL=https://api.cpass.cc</code></div>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.3 永久保存环境变量（推荐）</h4>
-        <p><b>方法一：使用系统设置</b></p>
-        <ol>
-          <li>右键点击"此电脑" → "属性"</li>
-          <li>点击"高级系统设置" → "环境变量"</li>
-          <li>在"用户变量"中点击"新建"</li>
-          <li>添加变量名：<code>ANTHROPIC_AUTH_TOKEN</code>，值：<code>sk-xxxx</code></li>
-          <li>添加变量名：<code>ANTHROPIC_BASE_URL</code>，值：<code>https://api.cpass.cc</code></li>
-        </ol>
-
-        <p><b>方法二：使用 PowerShell（管理员）</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>[System.Environment]::SetEnvironmentVariable('ANTHROPIC_AUTH_TOKEN', 'sk-xxxx', 'User')
-[System.Environment]::SetEnvironmentVariable('ANTHROPIC_BASE_URL', 'https://api.cpass.cc', 'User')</code></div>
-      </div>
-
-      <div class="install-step">
-        <h4>4️⃣ 启动 Claude Code</h4>
-        <p>配置完成后，进入到工程目录：</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>cd your-project-folder
-claude</code></div>
-
-        <p><b>首次运行配置：</b></p>
-        <ul>
-          <li>选择您的开发环境配置</li>
-          <li>配置代码生成偏好</li>
-          <li>开始 AI 辅助编程！🚀</li>
-        </ul>
+      <div class="tutorial-nav-status">
+        <div class="tutorial-status-dot"></div>
+        <span>DOCS_ACTIVE</span>
       </div>
     </div>
 
-    <!-- Claude macOS 教程 -->
-    <div id="claude-macos" class="tab-content">
-      <div class="section-title">🍎 macOS 完整安装教程</div>
+    <!-- 产品选择器 -->
+    <div class="product-selector">
+      <button class="product-btn active" data-product="claude" onclick="switchProduct('claude')">
+        <span class="product-btn-index">01</span>
+        <span>Claude Code</span>
+      </button>
+      <button class="product-btn" data-product="codex" onclick="switchProduct('codex')">
+        <span class="product-btn-index">02</span>
+        <span>CodeX</span>
+      </button>
+    </div>
 
-      <div class="install-step">
-        <h4>1️⃣ 安装 Node.js（版本需 ≥ 18）</h4>
+    <!-- 系统选择器 -->
+    <div class="system-selector">
+      <button class="system-btn active" data-system="windows" onclick="switchSystem('windows')">WIN</button>
+      <button class="system-btn" data-system="macos" onclick="switchSystem('macos')">MAC</button>
+      <button class="system-btn" data-system="linux" onclick="switchSystem('linux')">LNX</button>
+    </div>
 
-        <div class="method-option">
-          <div class="method-title">方法一：使用 Homebrew（推荐）</div>
-          <p>如果尚未安装 Homebrew，先安装：</p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></div>
+    <!-- 内容视口 -->
+    <div class="content-viewport" id="content-viewport">
 
-          <p>然后安装 Node.js：</p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>brew install node</code></div>
+      <!-- Claude Code - Windows -->
+      <div class="content-panel active" id="panel-claude-windows">
+        <div class="steps">
+
+        <!-- Step 1 -->
+        <div class="step active">
+          <span class="step-number">01</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 Node.js（版本 ≥ 18）</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+              <div class="method">
+                <p class="method-label">官方安装包（推荐）</p>
+                <ul class="list">
+                  <li>访问 <a href="https://nodejs.org" target="_blank">nodejs.org</a></li>
+                  <li>下载 LTS 版本的 Windows Installer (.msi)</li>
+                  <li>运行安装程序，按默认设置完成</li>
+                </ul>
+              </div>
+
+              <div class="method">
+                <p class="method-label">使用 Winget</p>
+                <div class="code-block">
+                  <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span class="code-label">PowerShell</span>
+                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  </div>
+                  <div class="code-body">
+                    <code>winget install OpenJS.NodeJS.LTS</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="method">
+                <p class="method-label">验证安装</p>
+                <div class="code-block">
+                  <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span class="code-label">Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  </div>
+                  <div class="code-body">
+                    <code>node --version
+npm --version</code>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          </div>
         </div>
 
-        <div class="method-option">
-          <div class="method-title">方法二：使用官方安装包</div>
-          <ol>
-            <li>访问 <a href="https://nodejs.org" target="_blank">https://nodejs.org</a></li>
-            <li>下载 macOS Installer (.pkg)</li>
-            <li>运行安装程序，按提示完成安装</li>
-          </ol>
+        <!-- Step 2 -->
+        <div class="step">
+          <span class="step-number">02</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 Claude Code CLI</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+              <div class="method">
+                <p class="method-label">全局安装</p>
+                <div class="code-block">
+                  <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span class="code-label">Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  </div>
+                  <div class="code-body">
+                    <code>npm install -g @anthropic-ai/claude-code</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="method">
+                <p class="method-label">验证安装</p>
+                <div class="code-block">
+                  <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span class="code-label">Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  </div>
+                  <div class="code-body">
+                    <code>claude --version</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="notice warning">
+                <span class="notice-icon">!</span>
+                <span class="notice-text">如遇权限问题，请以管理员身份运行终端</span>
+              </div>
+
+            </div>
+          </div>
+          </div>
         </div>
 
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>node --version
-npm --version</code></div>
+        <!-- Step 3 -->
+        <div class="step">
+          <span class="step-number">03</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">配置 Cpass API</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+              <div class="method">
+                <p class="method-label">获取 API Token</p>
+                <ul class="list">
+                  <li>访问 Cpass 控制台</li>
+                  <li>进入「API 令牌」页面</li>
+                  <li>创建以 <strong>sk-</strong> 开头的 Token</li>
+                </ul>
+              </div>
+
+              <div class="method">
+                <p class="method-label">临时配置（PowerShell）</p>
+                <div class="code-block">
+                  <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span class="code-label">PowerShell</span>
+                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  </div>
+                  <div class="code-body">
+                    <code>$env:ANTHROPIC_AUTH_TOKEN="sk-xxxx"
+$env:ANTHROPIC_BASE_URL="https://api.cpass.cc"</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="method">
+                <p class="method-label">临时配置（CMD）</p>
+                <div class="code-block">
+                  <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span class="code-label">CMD</span>
+                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  </div>
+                  <div class="code-body">
+                    <code>set ANTHROPIC_AUTH_TOKEN=sk-xxxx
+set ANTHROPIC_BASE_URL=https://api.cpass.cc</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="method">
+                <p class="method-label">永久配置方法一：使用系统设置</p>
+                <ul class="list">
+                  <li>右键点击"此电脑" → "属性"</li>
+                  <li>点击"高级系统设置" → "环境变量"</li>
+                  <li>在"用户变量"中点击"新建"</li>
+                  <li>添加变量名：<strong>ANTHROPIC_AUTH_TOKEN</strong>，值：<strong>sk-xxxx</strong></li>
+                  <li>添加变量名：<strong>ANTHROPIC_BASE_URL</strong>，值：<strong>https://api.cpass.cc</strong></li>
+                </ul>
+              </div>
+
+              <div class="method">
+                <p class="method-label">永久配置方法二：通过文件设置（推荐）</p>
+                <p style="font-size: 12px; color: var(--white-50); margin-bottom: var(--space-2);">
+                  编辑文件 <code style="background: var(--white-06); padding: 2px 6px; border-radius: 4px;">C:/Users/你的用户名/.claude/settings.json</code>（如果没有请自行创建）：
+                </p>
+                <div class="code-block">
+                  <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span class="code-label">settings.json</span>
+                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  </div>
+                  <div class="code-body">
+                    <code>{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "你的API密钥",
+    "ANTHROPIC_BASE_URL": "https://api.cpass.cc",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
+  "permissions": {
+    "allow": [],
+    "deny": []
+  }
+}</code>
+                  </div>
+                </div>
+                <div class="notice info">
+                  <span class="notice-icon">💡</span>
+                  <span class="notice-text">此文件不需要时可随意删除，不影响 Claude Code 使用</span>
+                </div>
+              </div>
+
+              <div class="method">
+                <p class="method-label">永久配置方法三：使用 PowerShell</p>
+                <div class="code-block">
+                  <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span class="code-label">PowerShell (Admin)</span>
+                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  </div>
+                  <div class="code-body">
+                    <code>[System.Environment]::SetEnvironmentVariable('ANTHROPIC_AUTH_TOKEN', 'sk-xxxx', 'User')
+[System.Environment]::SetEnvironmentVariable('ANTHROPIC_BASE_URL', 'https://api.cpass.cc', 'User')</code>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step">
+          <span class="step-number">04</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">启动 Claude Code</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+              <div class="method">
+                <p class="method-label">进入项目目录并启动</p>
+                <div class="code-block">
+                  <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <span class="code-label">Terminal</span>
+                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                  </div>
+                  <div class="code-body">
+                    <code>cd your-project-folder
+claude</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="notice info">
+                <span class="notice-icon">✓</span>
+                <span class="notice-text">首次运行时配置开发环境偏好，即可开始 AI 辅助编程</span>
+              </div>
+
+            </div>
+          </div>
+          </div>
+        </div>
+
       </div>
+    </div>
 
-      <div class="install-step">
-        <h4>2️⃣ 安装 Claude Code CLI</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>npm install -g @anthropic-ai/claude-code</code></div>
+      <!-- Claude Code - macOS -->
+      <div class="content-panel" id="panel-claude-macos">
+        <div class="steps">
 
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>claude --version</code></div>
-      </div>
+        <div class="step active">
+          <span class="step-number">01</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 Node.js（版本 ≥ 18）</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
 
-      <div class="install-step">
-        <h4>3️⃣ 配置 Cpass API</h4>
+                <div class="method">
+                  <p class="method-label">使用 Homebrew（推荐）</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code>
+                    </div>
+                  </div>
+                </div>
 
-        <h4 style="font-size: 18px; margin-top: 20px;">3.1 获取 API Token</h4>
-        <p>访问 Cpass 控制台，创建以 <b>sk-</b> 开头的 Token。</p>
+                <div class="method">
+                  <p class="method-label">安装 Node.js</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>brew install node</code>
+                    </div>
+                  </div>
+                </div>
 
-        <h4 style="font-size: 18px; margin-top: 20px;">3.2 配置环境变量（临时）</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>export ANTHROPIC_AUTH_TOKEN=sk-xxxx
-export ANTHROPIC_BASE_URL=https://api.cpass.cc</code></div>
+                <div class="method">
+                  <p class="method-label">验证安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>node --version
+npm --version</code>
+                    </div>
+                  </div>
+                </div>
 
-        <h4 style="font-size: 18px; margin-top: 20px;">3.3 永久保存环境变量（推荐）</h4>
-        <p><b>如果使用 Bash：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.bashrc
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">02</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 Claude Code CLI</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+                <div class="method">
+                  <p class="method-label">全局安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>npm install -g @anthropic-ai/claude-code</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">验证安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>claude --version</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">03</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">配置 Cpass API</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+                <div class="method">
+                  <p class="method-label">获取 API Token</p>
+                  <ul class="list">
+                    <li>访问 Cpass 控制台</li>
+                    <li>进入「API 令牌」页面</li>
+                    <li>创建以 <strong>sk-</strong> 开头的 Token</li>
+                  </ul>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">临时配置</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>export ANTHROPIC_AUTH_TOKEN=sk-xxxx
+export ANTHROPIC_BASE_URL=https://api.cpass.cc</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">永久配置方法一：通过文件设置（推荐）</p>
+                  <p style="font-size: 12px; color: var(--white-50); margin-bottom: var(--space-2);">
+                    编辑文件 <code style="background: var(--white-06); padding: 2px 6px; border-radius: 4px;">~/.claude/settings.json</code>（如果没有请自行创建）：
+                  </p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">settings.json</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "你的API密钥",
+    "ANTHROPIC_BASE_URL": "https://api.cpass.cc",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
+  "permissions": {
+    "allow": [],
+    "deny": []
+  }
+}</code>
+                    </div>
+                  </div>
+                  <div class="notice info">
+                    <span class="notice-icon">💡</span>
+                    <span class="notice-text">此文件不需要时可随意删除，不影响 Claude Code 使用</span>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">永久配置方法二：Bash</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.bashrc
 echo 'export ANTHROPIC_BASE_URL=https://api.cpass.cc' >> ~/.bashrc
-source ~/.bashrc</code></div>
+source ~/.bashrc</code>
+                    </div>
+                  </div>
+                </div>
 
-        <p><b>如果使用 Zsh（macOS 默认）：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.zshrc
+                <div class="method">
+                  <p class="method-label">永久配置方法三：Zsh（macOS 默认）</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.zshrc
 echo 'export ANTHROPIC_BASE_URL=https://api.cpass.cc' >> ~/.zshrc
-source ~/.zshrc</code></div>
-      </div>
+source ~/.zshrc</code>
+                    </div>
+                  </div>
+                </div>
 
-      <div class="install-step">
-        <h4>4️⃣ 启动 Claude Code</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>cd your-project-folder
-claude</code></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">04</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">启动 Claude Code</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+                <div class="method">
+                  <p class="method-label">进入项目目录并启动</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>cd your-project-folder
+claude</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="notice info">
+                  <span class="notice-icon">✓</span>
+                  <span class="notice-text">首次运行时配置开发环境偏好，即可开始 AI 辅助编程</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Claude Linux 教程 -->
-    <div id="claude-linux" class="tab-content">
-      <div class="section-title">🐧 Linux 完整安装教程</div>
+      <!-- Claude Code - Linux -->
+      <div class="content-panel" id="panel-claude-linux">
+        <div class="steps">
 
-      <div class="install-step">
-        <h4>1️⃣ 安装 Node.js（版本需 ≥ 18）</h4>
+        <div class="step active">
+          <span class="step-number">01</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 Node.js（版本 ≥ 18）</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
 
-        <div class="method-option">
-          <div class="method-title">Ubuntu / Debian</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
-sudo apt-get install -y nodejs</code></div>
+                <div class="method">
+                  <p class="method-label">Ubuntu / Debian</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
+sudo apt-get install -y nodejs</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">Fedora / RHEL / CentOS</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
+sudo dnf install -y nodejs</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">Arch Linux</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>sudo pacman -S nodejs npm</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">验证安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>node --version
+npm --version</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="method-option">
-          <div class="method-title">Fedora / RHEL / CentOS</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
-sudo dnf install -y nodejs</code></div>
+        <div class="step">
+          <span class="step-number">02</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 Claude Code CLI</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+                <div class="method">
+                  <p class="method-label">全局安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>sudo npm install -g @anthropic-ai/claude-code</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">验证安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>claude --version</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="method-option">
-          <div class="method-title">Arch Linux</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>sudo pacman -S nodejs npm</code></div>
-        </div>
+        <div class="step">
+          <span class="step-number">03</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">配置 Cpass API</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
 
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>node --version
-npm --version</code></div>
-      </div>
+                <div class="method">
+                  <p class="method-label">获取 API Token</p>
+                  <ul class="list">
+                    <li>访问 Cpass 控制台</li>
+                    <li>进入「API 令牌」页面</li>
+                    <li>创建以 <strong>sk-</strong> 开头的 Token</li>
+                  </ul>
+                </div>
 
-      <div class="install-step">
-        <h4>2️⃣ 安装 Claude Code CLI</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>sudo npm install -g @anthropic-ai/claude-code</code></div>
+                <div class="method">
+                  <p class="method-label">临时配置</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>export ANTHROPIC_AUTH_TOKEN=sk-xxxx
+export ANTHROPIC_BASE_URL=https://api.cpass.cc</code>
+                    </div>
+                  </div>
+                </div>
 
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>claude --version</code></div>
-      </div>
+                <div class="method">
+                  <p class="method-label">永久配置方法一：通过文件设置（推荐）</p>
+                  <p style="font-size: 12px; color: var(--white-50); margin-bottom: var(--space-2);">
+                    编辑文件 <code style="background: var(--white-06); padding: 2px 6px; border-radius: 4px;">~/.claude/settings.json</code>（如果没有请自行创建）：
+                  </p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">settings.json</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "你的API密钥",
+    "ANTHROPIC_BASE_URL": "https://api.cpass.cc",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
+  "permissions": {
+    "allow": [],
+    "deny": []
+  }
+}</code>
+                    </div>
+                  </div>
+                  <div class="notice info">
+                    <span class="notice-icon">💡</span>
+                    <span class="notice-text">此文件不需要时可随意删除，不影响 Claude Code 使用</span>
+                  </div>
+                </div>
 
-      <div class="install-step">
-        <h4>3️⃣ 配置 Cpass API</h4>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.1 获取 API Token</h4>
-        <p>访问 Cpass 控制台，创建以 <b>sk-</b> 开头的 Token。</p>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.2 配置环境变量（临时）</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>export ANTHROPIC_AUTH_TOKEN=sk-xxxx
-export ANTHROPIC_BASE_URL=https://api.cpass.cc</code></div>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.3 永久保存环境变量（推荐）</h4>
-        <p><b>如果使用 Bash：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.bashrc
+                <div class="method">
+                  <p class="method-label">永久配置方法二：Bash</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.bashrc
 echo 'export ANTHROPIC_BASE_URL=https://api.cpass.cc' >> ~/.bashrc
-source ~/.bashrc</code></div>
+source ~/.bashrc</code>
+                    </div>
+                  </div>
+                </div>
 
-        <p><b>如果使用 Zsh：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.zshrc
+                <div class="method">
+                  <p class="method-label">永久配置方法三：Zsh</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>echo 'export ANTHROPIC_AUTH_TOKEN=sk-xxxx' >> ~/.zshrc
 echo 'export ANTHROPIC_BASE_URL=https://api.cpass.cc' >> ~/.zshrc
-source ~/.zshrc</code></div>
+source ~/.zshrc</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">04</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">启动 Claude Code</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+                <div class="method">
+                  <p class="method-label">进入项目目录并启动</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>cd your-project-folder
+claude</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="notice info">
+                  <span class="notice-icon">✓</span>
+                  <span class="notice-text">首次运行时配置开发环境偏好，即可开始 AI 辅助编程</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
-
-      <div class="install-step">
-        <h4>4️⃣ 启动 Claude Code</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>cd your-project-folder
-claude</code></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- CodeX 安装教程 -->
-  <div id="codex-tutorial" class="tutorial-header animate-on-scroll">
-    <div class="tutorial-title" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text;">CodeX 安装步骤</div>
-    <div class="tutorial-subtitle">强大的 OpenAI 代码助手安装指南</div>
-  </div>
-
-  <div class="glass-box animate-on-scroll" style="text-align: center;">
-    <div class="tutorial-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🚀 CodeX 快速开始</div>
-    <p>企业级 AI 编程助手，GPT-5 驱动</p>
-  </div>
-
-  <div class="step-indicator animate-on-scroll">
-    <div class="step-item">
-      <div class="step-number">1</div>
-      <div class="step-label">环境准备</div>
-    </div>
-    <div class="step-item">
-      <div class="step-number">2</div>
-      <div class="step-label">安装配置</div>
-    </div>
-    <div class="step-item">
-      <div class="step-number">3</div>
-      <div class="step-label">开始编程</div>
-    </div>
-  </div>
-
-  <div class="tabs-container animate-on-scroll">
-    <div class="tabs" id="codex-tabs">
-      <div class="tab active" onclick="switchCodexTab('windows')">🪟 Windows</div>
-      <div class="tab" onclick="switchCodexTab('macos')">🍎 macOS</div>
-      <div class="tab" onclick="switchCodexTab('linux')">🐧 Linux</div>
     </div>
 
-    <!-- CodeX Windows 教程 -->
-    <div id="windows" class="tab-content active">
-      <div class="section-title">🪟 Windows 完整安装教程</div>
+      <!-- CodeX - Windows -->
+      <div class="content-panel" id="panel-codex-windows">
+        <div class="steps">
 
-      <div class="install-step">
-        <h4>1️⃣ 安装 Node.js</h4>
+        <div class="step active">
+          <span class="step-number">01</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 Node.js</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
 
-        <div class="method-option">
-          <div class="method-title">方法一：使用官方安装包（推荐）</div>
-          <ol>
-            <li>访问 <a href="https://nodejs.org" target="_blank">https://nodejs.org</a></li>
-            <li>下载 LTS 版本的 Windows Installer (.msi)</li>
-            <li>运行安装程序，按默认设置完成安装</li>
-            <li>安装程序会自动添加到 PATH 环境变量</li>
-          </ol>
+                <div class="method">
+                  <p class="method-label">官方安装包（推荐）</p>
+                  <ul class="list">
+                    <li>访问 <a href="https://nodejs.org" target="_blank">nodejs.org</a></li>
+                    <li>下载 LTS 版本的 Windows Installer (.msi)</li>
+                    <li>运行安装程序，按默认设置完成</li>
+                    <li>安装程序会自动添加到 PATH 环境变量</li>
+                  </ul>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">使用 Winget（Windows 11 或 Windows 10 自带）</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">PowerShell</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>winget install OpenJS.NodeJS.LTS</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">使用 Chocolatey</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">PowerShell (Admin)</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>choco install nodejs-lts</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">使用 Scoop</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">PowerShell</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>scoop install nodejs-lts</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">验证安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>node --version
+npm --version</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="notice info">
+                  <span class="notice-icon">💡</span>
+                  <span class="notice-text">建议使用 LTS（长期支持）版本以获得最佳稳定性。安装完成后需重启命令行窗口。</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="method-option">
-          <div class="method-title">方法二：使用包管理器</div>
-          <p><b>使用 Winget（Windows 11 或 Windows 10 自带）：</b></p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>winget install OpenJS.NodeJS.LTS</code></div>
+        <div class="step">
+          <span class="step-number">02</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 CodeX CLI</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
 
-          <p><b>使用 Chocolatey：</b></p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>choco install nodejs-lts</code></div>
+                <div class="method">
+                  <p class="method-label">全局安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>npm install -g @openai/codex@latest</code>
+                    </div>
+                  </div>
+                </div>
 
-          <p><b>使用 Scoop：</b></p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>scoop install nodejs-lts</code></div>
+                <div class="method">
+                  <p class="method-label">验证安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>codex --version</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="notice warning">
+                  <span class="notice-icon">!</span>
+                  <span class="notice-text">如遇权限问题，请以管理员身份运行终端</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
 
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>node --version
-npm --version</code></div>
+        <div class="step">
+          <span class="step-number">03</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">配置 Cpass API</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
 
-        <div class="info-box">
-          <b>💡 提示：</b> 建议使用 LTS（长期支持）版本以获得最佳稳定性。安装完成后需重启命令行窗口。
-        </div>
-      </div>
+                <div class="notice warning">
+                  <span class="notice-icon">!</span>
+                  <span class="notice-text"><strong>重要：</strong>CodeX 需要专用分组令牌，与 Claude Code 不同</span>
+                </div>
 
-      <div class="install-step">
-        <h4>2️⃣ 安装 CodeX CLI</h4>
-        <p>打开命令提示符（以管理员身份运行）或 PowerShell，执行以下命令：</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>npm install -g @openai/codex@latest</code></div>
+                <div class="method">
+                  <p class="method-label">获取 CodeX 专用 API Token</p>
+                  <ul class="list">
+                    <li>访问 Cpass 控制台</li>
+                    <li>进入「API 令牌」页面</li>
+                    <li>创建 CodeX 专用分组令牌</li>
+                  </ul>
+                </div>
 
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>codex --version</code></div>
+                <div class="method">
+                  <p class="method-label">创建配置目录</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">CMD</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>mkdir %USERPROFILE%\.codex
+cd %USERPROFILE%\.codex</code>
+                    </div>
+                  </div>
+                </div>
 
-        <div class="warning-box">
-          <b>⚠️ 注意：</b>如果遇到权限问题，请确保以管理员身份运行命令提示符。
-        </div>
-      </div>
-
-      <div class="install-step">
-        <h4>3️⃣ 配置 cpass API</h4>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.1 获取 CodeX 专用 API Token</h4>
-        <ul>
-          <li>访问 cpass 控制台</li>
-          <li>注册账户或登录现有账户</li>
-          <li>进入 "API 密钥" 页面</li>
-          <li>点击 "创建新密钥"，选择 CodeX 专用分组</li>
-          <li>复制生成的 API Key</li>
-        </ul>
-
-        <div class="important-box">
-          <b>🔴 重要：</b>CodeX 需要使用专门的分组令牌，与 Claude Code 的令牌不同！
-        </div>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.2 创建配置文件夹</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>mkdir %USERPROFILE%\.codex
-cd %USERPROFILE%\.codex</code></div>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.3 创建配置文件</h4>
-
-        <p><b>1. 创建 config.toml 文件：</b></p>
-        <p>使用记事本或您喜欢的文本编辑器创建 config.toml 文件：</p>
-        <div class="config-file">
-          <div class="config-filename">📄 config.toml</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>model_provider = "cpass"
+                <div class="config-file">
+                  <p class="config-name">config.toml</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">TOML</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>model_provider = "cpass"
 model = "gpt-5.1-codex"
 model_reasoning_effort = "high"
 network_access = "enabled"
@@ -1513,89 +2233,232 @@ disable_response_storage = true
 name = "cpass"
 base_url = "https://api.cpass.cc/v1"
 wire_api = "responses"
-requires_openai_auth = true</code></div>
+requires_openai_auth = true</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="config-file">
+                  <p class="config-name">auth.json</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">JSON</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>{
+  "OPENAI_API_KEY": "your-codex-token"
+}</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
 
-        <p><b>2. 创建 auth.json 文件：</b></p>
-        <p>在同一目录下创建 auth.json 文件：</p>
-        <div class="config-file">
-          <div class="config-filename">📄 auth.json</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>{
-  "OPENAI_API_KEY": "粘贴为CodeX专用分组令牌key"
-}</code></div>
+        <div class="step">
+          <span class="step-number">04</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">启动 CodeX</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+                <div class="method">
+                  <p class="method-label">进入项目目录并启动</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>mkdir my-project
+cd my-project
+codex</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="notice info">
+                  <span class="notice-icon">✓</span>
+                  <span class="notice-text">首次运行时配置开发环境偏好，即可开始 AI 辅助编程</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="install-step">
-        <h4>4️⃣ 启动 CodeX</h4>
-        <p>配置完成后，先进入到工程目录：</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>mkdir my-codex-project
-cd my-codex-project</code></div>
-
-        <p>然后，运行以下命令启动：</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>codex</code></div>
-
-        <p><b>首次运行配置：</b></p>
-        <ul>
-          <li>选择您的开发环境配置</li>
-          <li>配置代码生成偏好</li>
-          <li>设置 GPT-5 推理等级</li>
-          <li>开始 AI 辅助编程！🚀</li>
-        </ul>
       </div>
     </div>
 
-    <!-- CodeX macOS 教程 -->
-    <div id="macos" class="tab-content">
-      <div class="section-title">🍎 macOS 完整安装教程</div>
+      <!-- CodeX - macOS -->
+      <div class="content-panel" id="panel-codex-macos">
+        <div class="steps">
 
-      <div class="install-step">
-        <h4>1️⃣ 安装 Node.js</h4>
+        <div class="step active">
+          <span class="step-number">01</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 Node.js</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
 
-        <div class="method-option">
-          <div class="method-title">方法一：使用 Homebrew（推荐）</div>
-          <p>如果尚未安装 Homebrew，先安装：</p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></div>
+                <div class="method">
+                  <p class="method-label">使用 Homebrew（推荐）</p>
+                  <p class="method-desc">如果尚未安装 Homebrew，先安装：</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code>
+                    </div>
+                  </div>
+                  <p class="method-desc">然后安装 Node.js：</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>brew install node</code>
+                    </div>
+                  </div>
+                </div>
 
-          <p>然后安装 Node.js：</p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>brew install node</code></div>
+                <div class="method">
+                  <p class="method-label">使用官方安装包</p>
+                  <ul class="list">
+                    <li>访问 <a href="https://nodejs.org" target="_blank">nodejs.org</a></li>
+                    <li>下载 macOS Installer (.pkg)</li>
+                    <li>运行安装程序，按提示完成安装</li>
+                  </ul>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">验证安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>node --version
+npm --version</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="method-option">
-          <div class="method-title">方法二：使用官方安装包</div>
-          <ol>
-            <li>访问 <a href="https://nodejs.org" target="_blank">https://nodejs.org</a></li>
-            <li>下载 macOS Installer (.pkg)</li>
-            <li>运行安装程序，按提示完成安装</li>
-          </ol>
+        <div class="step">
+          <span class="step-number">02</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 CodeX CLI</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+                <div class="method">
+                  <p class="method-label">全局安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>npm install -g @openai/codex@latest</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">验证安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>codex --version</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
 
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>node --version
-npm --version</code></div>
-      </div>
+        <div class="step">
+          <span class="step-number">03</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">配置 Cpass API</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
 
-      <div class="install-step">
-        <h4>2️⃣ 安装 CodeX CLI</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>npm install -g @openai/codex@latest</code></div>
+                <div class="notice warning">
+                  <span class="notice-icon">!</span>
+                  <span class="notice-text"><strong>重要：</strong>CodeX 需要专用分组令牌，与 Claude Code 不同</span>
+                </div>
 
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>codex --version</code></div>
-      </div>
+                <div class="method">
+                  <p class="method-label">获取 CodeX 专用 API Token</p>
+                  <ul class="list">
+                    <li>访问 Cpass 控制台</li>
+                    <li>进入「API 令牌」页面</li>
+                    <li>创建 CodeX 专用分组令牌</li>
+                  </ul>
+                </div>
 
-      <div class="install-step">
-        <h4>3️⃣ 配置 cpass API</h4>
+                <div class="method">
+                  <p class="method-label">创建配置目录</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>mkdir -p ~/.codex
+cd ~/.codex</code>
+                    </div>
+                  </div>
+                </div>
 
-        <h4 style="font-size: 18px; margin-top: 20px;">3.1 获取 API Token</h4>
-        <p>访问 cpass 控制台，创建 CodeX 专用分组令牌。</p>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.2 创建配置文件夹</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>mkdir -p ~/.codex
-cd ~/.codex</code></div>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.3 创建配置文件</h4>
-        <p><b>创建 config.toml：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>cat > config.toml << 'EOF'
+                <div class="method">
+                  <p class="method-label">创建 config.toml</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>cat > config.toml << 'EOF'
 model_provider = "cpass"
 model = "gpt-5.1-codex"
 model_reasoning_effort = "high"
@@ -1607,70 +2470,243 @@ name = "cpass"
 base_url = "https://api.cpass.cc/v1"
 wire_api = "responses"
 requires_openai_auth = true
-EOF</code></div>
+EOF</code>
+                    </div>
+                  </div>
+                </div>
 
-        <p><b>创建 auth.json：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>cat > auth.json << 'EOF'
+                <div class="method">
+                  <p class="method-label">创建 auth.json</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>cat > auth.json << 'EOF'
 {
-  "OPENAI_API_KEY": "你的CodeX专用Token"
+  "OPENAI_API_KEY": "your-codex-token"
 }
-EOF</code></div>
-      </div>
+EOF</code>
+                    </div>
+                  </div>
+                </div>
 
-      <div class="install-step">
-        <h4>4️⃣ 启动 CodeX</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>mkdir my-codex-project
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">04</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">启动 CodeX</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+                <div class="method">
+                  <p class="method-label">进入项目目录并启动</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>mkdir my-codex-project
 cd my-codex-project
-codex</code></div>
+codex</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="notice info">
+                  <span class="notice-icon">✓</span>
+                  <span class="notice-text">首次运行时配置开发环境偏好，即可开始 AI 辅助编程</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- CodeX Linux 教程 -->
-    <div id="linux" class="tab-content">
-      <div class="section-title">🐧 Linux 完整安装教程</div>
+      <!-- CodeX - Linux -->
+      <div class="content-panel" id="panel-codex-linux">
+        <div class="steps">
 
-      <div class="install-step">
-        <h4>1️⃣ 安装 Node.js</h4>
+        <div class="step active">
+          <span class="step-number">01</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 Node.js</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
 
-        <div class="method-option">
-          <div class="method-title">Ubuntu / Debian</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
-sudo apt-get install -y nodejs</code></div>
+                <div class="method">
+                  <p class="method-label">Ubuntu / Debian</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
+sudo apt-get install -y nodejs</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">Fedora / RHEL / CentOS</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
+sudo dnf install -y nodejs</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">Arch Linux</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>sudo pacman -S nodejs npm</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">验证安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>node --version
+npm --version</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="method-option">
-          <div class="method-title">Fedora / RHEL / CentOS</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
-sudo dnf install -y nodejs</code></div>
+        <div class="step">
+          <span class="step-number">02</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">安装 CodeX CLI</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+                <div class="method">
+                  <p class="method-label">全局安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>sudo npm install -g @openai/codex@latest</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="method">
+                  <p class="method-label">验证安装</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>codex --version</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="method-option">
-          <div class="method-title">Arch Linux</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>sudo pacman -S nodejs npm</code></div>
-        </div>
+        <div class="step">
+          <span class="step-number">03</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">配置 Cpass API</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
 
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>node --version
-npm --version</code></div>
-      </div>
+                <div class="notice warning">
+                  <span class="notice-icon">!</span>
+                  <span class="notice-text"><strong>重要：</strong>CodeX 需要专用分组令牌，与 Claude Code 不同</span>
+                </div>
 
-      <div class="install-step">
-        <h4>2️⃣ 安装 CodeX CLI</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>sudo npm install -g @openai/codex@latest</code></div>
+                <div class="method">
+                  <p class="method-label">获取 CodeX 专用 API Token</p>
+                  <ul class="list">
+                    <li>访问 Cpass 控制台</li>
+                    <li>进入「API 令牌」页面</li>
+                    <li>创建 CodeX 专用分组令牌</li>
+                  </ul>
+                </div>
 
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>codex --version</code></div>
-      </div>
+                <div class="method">
+                  <p class="method-label">创建配置目录</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>mkdir -p ~/.codex
+cd ~/.codex</code>
+                    </div>
+                  </div>
+                </div>
 
-      <div class="install-step">
-        <h4>3️⃣ 配置 cpass API</h4>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">创建配置文件</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>mkdir -p ~/.codex
-cd ~/.codex
-
-# 创建 config.toml
-cat > config.toml << 'EOF'
+                <div class="method">
+                  <p class="method-label">创建 config.toml</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>cat > config.toml << 'EOF'
 model_provider = "cpass"
 model = "gpt-5.1-codex"
 model_reasoning_effort = "high"
@@ -1682,570 +2718,945 @@ name = "cpass"
 base_url = "https://api.cpass.cc/v1"
 wire_api = "responses"
 requires_openai_auth = true
-EOF
+EOF</code>
+                    </div>
+                  </div>
+                </div>
 
-# 创建 auth.json
-cat > auth.json << 'EOF'
+                <div class="method">
+                  <p class="method-label">创建 auth.json</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>cat > auth.json << 'EOF'
 {
-  "OPENAI_API_KEY": "你的CodeX专用Token"
+  "OPENAI_API_KEY": "your-codex-token"
 }
-EOF</code></div>
-      </div>
+EOF</code>
+                    </div>
+                  </div>
+                </div>
 
-      <div class="install-step">
-        <h4>4️⃣ 启动 CodeX</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>mkdir my-codex-project
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-number">04</span>
+          <div>
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="step-title">启动 CodeX</span>
+              <span class="step-toggle">▼</span>
+            </div>
+            <div class="step-body">
+              <div class="step-content">
+
+                <div class="method">
+                  <p class="method-label">进入项目目录并启动</p>
+                  <div class="code-block">
+                    <div class="code-header">
+                      <div class="code-dots"><span></span><span></span><span></span></div>
+                      <span class="code-label">Terminal</span>
+                      <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <div class="code-body">
+                      <code>mkdir my-codex-project
 cd my-codex-project
-codex</code></div>
-      </div>
-    </div>
-  </div>
+codex</code>
+                    </div>
+                  </div>
+                </div>
 
-  <div class="divider"></div>
+                <div class="notice info">
+                  <span class="notice-icon">✓</span>
+                  <span class="notice-text">首次运行时配置开发环境偏好，即可开始 AI 辅助编程</span>
+                </div>
 
-  <!-- Gemini CLI 安装教程 -->
-  <div id="gemini-tutorial" class="tutorial-header animate-on-scroll">
-    <div class="tutorial-title" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc04 100%); -webkit-background-clip: text;">Gemini CLI 安装步骤</div>
-    <div class="tutorial-subtitle">Google AI 编程助手安装指南</div>
-  </div>
-
-  <div class="glass-box animate-on-scroll" style="text-align: center;">
-    <div class="tutorial-badge" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc04 100%);">🚀 Gemini CLI 快速开始</div>
-    <p>Google AI 编程助手，Gemini 2.5 Pro 驱动</p>
-  </div>
-
-  <div class="step-indicator animate-on-scroll">
-    <div class="step-item">
-      <div class="step-number">1</div>
-      <div class="step-label">安装 CLI</div>
-    </div>
-    <div class="step-item">
-      <div class="step-number">2</div>
-      <div class="step-label">配置密钥</div>
-    </div>
-    <div class="step-item">
-      <div class="step-number">3</div>
-      <div class="step-label">开始编程</div>
-    </div>
-  </div>
-
-  <div class="tabs-container animate-on-scroll">
-    <div class="tabs" id="gemini-tabs">
-      <div class="tab active" onclick="switchGeminiTab('gemini-windows')">🪟 Windows</div>
-      <div class="tab" onclick="switchGeminiTab('gemini-macos')">🍎 macOS</div>
-      <div class="tab" onclick="switchGeminiTab('gemini-linux')">🐧 Linux</div>
-    </div>
-
-    <!-- Gemini Windows 教程 -->
-    <div id="gemini-windows" class="tab-content active">
-      <div class="section-title">🪟 Windows 完整安装教程</div>
-
-      <div class="install-step">
-        <h4>1️⃣ 安装 Node.js</h4>
-
-        <div class="method-option">
-          <div class="method-title">方法一：使用官方安装包（推荐）</div>
-          <ol>
-            <li>访问 <a href="https://nodejs.org" target="_blank">https://nodejs.org</a></li>
-            <li>下载 LTS 版本的 Windows Installer (.msi)</li>
-            <li>运行安装程序，按默认设置完成安装</li>
-            <li>安装程序会自动添加到 PATH 环境变量</li>
-          </ol>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="method-option">
-          <div class="method-title">方法二：使用包管理器</div>
-          <p><b>使用 Winget（Windows 11 或 Windows 10 自带）：</b></p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>winget install OpenJS.NodeJS.LTS</code></div>
-
-          <p><b>使用 Chocolatey：</b></p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>choco install nodejs-lts</code></div>
-
-          <p><b>使用 Scoop：</b></p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>scoop install nodejs-lts</code></div>
-        </div>
-
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>node --version
-npm --version</code></div>
-
-        <div class="info-box">
-          <b>💡 提示：</b> 建议使用 LTS（长期支持）版本以获得最佳稳定性。安装完成后需重启命令行窗口。
-        </div>
-      </div>
-
-      <div class="install-step">
-        <h4>2️⃣ 全局安装 Gemini CLI</h4>
-        <p>打开命令提示符或 PowerShell，执行以下命令：</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>npm install -g @google/gemini-cli</code></div>
-      </div>
-
-      <div class="install-step">
-        <h4>3️⃣ 配置 Gemini CLI</h4>
-
-        <div class="important-box">
-          <b>🔴 重要提示：</b>请将下方的 GEMINI_API_KEY 替换为您在 cpass 控制台 API 令牌页面 生成的 Gemini CLI 专用 API 密钥！
-        </div>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.1 创建 .gemini 文件夹</h4>
-        <p><b>配置位置：</b> %USERPROFILE%\.gemini\</p>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.2 创建 .env 文件</h4>
-        <p>在 .gemini 文件夹中创建 .env 文件：</p>
-        <div class="config-file">
-          <div class="config-filename">📄 .env</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>GOOGLE_GEMINI_BASE_URL=https://api.cpass.cc
-GEMINI_API_KEY=粘贴为Gemini CLI专用分组令牌key
-GEMINI_MODEL=gemini-3-pro-preview</code></div>
-        </div>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.3 创建 settings.json 文件</h4>
-        <p>在 .gemini 文件夹中创建 settings.json 文件：</p>
-        <div class="config-file">
-          <div class="config-filename">📄 settings.json</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>{
-  "ide": {
-    "enabled": true
-  },
-  "security": {
-    "auth": {
-      "selectedType": "gemini-api-key"
-    }
-  }
-}</code></div>
-        </div>
-
-        <div class="warning-box">
-          <b>⚠️ 注意：</b> 配置文件更加安全且便于管理，需要重启 Gemini CLI 才生效。
-        </div>
-      </div>
-
-      <div class="install-step">
-        <h4>4️⃣ 启动 Gemini CLI</h4>
-        <p>配置完成后，运行以下命令启动：</p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>gemini</code></div>
-
-        <p><b>开始使用 Gemini CLI！</b></p>
-        <ul style="list-style: none; padding-left: 0;">
-          <li>• 超大上下文窗口：1M tokens</li>
-          <li>• Agent Mode 自动规划任务</li>
-          <li>• Google Search 实时联网</li>
-        </ul>
       </div>
     </div>
 
-    <!-- Gemini macOS 教程 -->
-    <div id="gemini-macos" class="tab-content">
-      <div class="section-title">🍎 macOS 完整安装教程</div>
+    </div><!-- 关闭 content-viewport -->
+  </section>
 
-      <div class="install-step">
-        <h4>1️⃣ 安装 Node.js</h4>
-
-        <div class="method-option">
-          <div class="method-title">方法一：使用 Homebrew（推荐）</div>
-          <p>如果尚未安装 Homebrew，先安装：</p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></div>
-
-          <p>然后安装 Node.js：</p>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>brew install node</code></div>
-        </div>
-
-        <div class="method-option">
-          <div class="method-title">方法二：使用官方安装包</div>
-          <ol>
-            <li>访问 <a href="https://nodejs.org" target="_blank">https://nodejs.org</a></li>
-            <li>下载 macOS Installer (.pkg)</li>
-            <li>运行安装程序，按提示完成安装</li>
-          </ol>
-        </div>
-
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>node --version
-npm --version</code></div>
-      </div>
-
-      <div class="install-step">
-        <h4>2️⃣ 全局安装 Gemini CLI</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>npm install -g @google/gemini-cli</code></div>
-      </div>
-
-      <div class="install-step">
-        <h4>3️⃣ 配置 Gemini CLI</h4>
-
-        <div class="important-box">
-          <b>🔴 重要提示：</b>请将 GEMINI_API_KEY 替换为您在 cpass 控制台 API 令牌页面 生成的专用密钥！
-        </div>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.1 创建 .gemini 文件夹</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>mkdir -p ~/.gemini
-cd ~/.gemini</code></div>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.2 创建 .env 文件</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>cat > .env << 'EOF'
-GOOGLE_GEMINI_BASE_URL=https://api.cpass.cc
-GEMINI_API_KEY=粘贴为Gemini CLI专用分组令牌key
-GEMINI_MODEL=gemini-3-pro-preview
-EOF</code></div>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">3.3 创建 settings.json 文件</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>cat > settings.json << 'EOF'
-{
-  "ide": {
-    "enabled": true
-  },
-  "security": {
-    "auth": {
-      "selectedType": "gemini-api-key"
-    }
-  }
-}
-EOF</code></div>
-      </div>
-
-      <div class="install-step">
-        <h4>4️⃣ 启动 Gemini CLI</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>gemini</code></div>
-      </div>
-    </div>
-
-    <!-- Gemini Linux 教程 -->
-    <div id="gemini-linux" class="tab-content">
-      <div class="section-title">🐧 Linux 完整安装教程</div>
-
-      <div class="install-step">
-        <h4>1️⃣ 安装 Node.js</h4>
-
-        <div class="method-option">
-          <div class="method-title">Ubuntu / Debian</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
-sudo apt-get install -y nodejs</code></div>
-        </div>
-
-        <div class="method-option">
-          <div class="method-title">Fedora / RHEL / CentOS</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
-sudo dnf install -y nodejs</code></div>
-        </div>
-
-        <div class="method-option">
-          <div class="method-title">Arch Linux</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>sudo pacman -S nodejs npm</code></div>
-        </div>
-
-        <p><b>验证安装：</b></p>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>node --version
-npm --version</code></div>
-      </div>
-
-      <div class="install-step">
-        <h4>2️⃣ 全局安装 Gemini CLI</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>sudo npm install -g @google/gemini-cli</code></div>
-      </div>
-
-      <div class="install-step">
-        <h4>3️⃣ 配置 Gemini CLI</h4>
-
-        <h4 style="font-size: 18px; margin-top: 20px;">创建配置文件</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>mkdir -p ~/.gemini
-cd ~/.gemini
-
-# 创建 .env
-cat > .env << 'EOF'
-GOOGLE_GEMINI_BASE_URL=https://api.cpass.cc
-GEMINI_API_KEY=粘贴为Gemini CLI专用分组令牌key
-GEMINI_MODEL=gemini-3-pro-preview
-EOF
-
-# 创建 settings.json
-cat > settings.json << 'EOF'
-{
-  "ide": {
-    "enabled": true
-  },
-  "security": {
-    "auth": {
-      "selectedType": "gemini-api-key"
-    }
-  }
-}
-EOF</code></div>
-      </div>
-
-      <div class="install-step">
-        <h4>4️⃣ 启动 Gemini CLI</h4>
-        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">复制</button><code>gemini</code></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- 页脚 -->
-  <div style="text-align: center; padding: var(--spacing-lg) 0 0; opacity: 0.6; font-size: 14px;">
-    <p>© 2024 Cpass - 高性能 API 中转服务</p>
-  </div>
+  <!-- Footer -->
+  <footer>
+    <p class="footer-logo">CPASS</p>
+    <p class="footer-text">© 2026 Cpass Network</p>
+  </footer>
 
 </div>
-</div>
 
+<!-- ==================== Scripts ==================== -->
 <script>
 /**
- * 功能描述: 选项卡切换功能
- * Args:
- *     tabsId (string): 选项卡容器ID
- *     contentIds (array): 内容面板ID数组
- *     activeTabName (string): 要激活的选项卡名称
+ * WebGL Galaxy Background
  */
-function switchTabGeneric(tabsId, contentIds, activeTabName) {
-  // 隐藏所有选项卡内容
-  contentIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.classList.remove('active');
+(function() {
+  const canvas = document.getElementById('galaxy-canvas');
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+  if (!gl) {
+    canvas.style.background = 'radial-gradient(ellipse at center, #0a0a12 0%, #000 100%)';
+    return;
+  }
+
+  const config = {
+    focal: [0.5, 0.5],
+    rotation: [1.0, 0.0],
+    starSpeed: 0.5,
+    density: 0.8,
+    hueShift: 140.0,
+    speed: 0.8,
+    glowIntensity: 0.25,
+    saturation: 0.0,
+    twinkleIntensity: 0.35,
+    rotationSpeed: 0.08
+  };
+
+  const vs = `
+    attribute vec2 a_position;
+    attribute vec2 a_uv;
+    varying vec2 vUv;
+    void main() {
+      vUv = a_uv;
+      gl_Position = vec4(a_position, 0.0, 1.0);
     }
-  });
+  `;
 
-  // 移除所有选项卡的激活状态
-  const tabsContainer = document.getElementById(tabsId);
-  if (tabsContainer) {
-    tabsContainer.querySelectorAll('.tab').forEach(tab => {
-      tab.classList.remove('active');
-    });
+  const fs = `
+    precision highp float;
+    uniform float uTime;
+    uniform vec3 uResolution;
+    uniform vec2 uFocal;
+    uniform vec2 uRotation;
+    uniform float uStarSpeed;
+    uniform float uDensity;
+    uniform float uHueShift;
+    uniform float uSpeed;
+    uniform float uGlowIntensity;
+    uniform float uSaturation;
+    uniform float uTwinkleIntensity;
+    uniform float uRotationSpeed;
+    varying vec2 vUv;
+
+    #define NUM_LAYER 4.0
+    #define MAT45 mat2(0.7071, -0.7071, 0.7071, 0.7071)
+
+    float Hash21(vec2 p) {
+      p = fract(p * vec2(123.34, 456.21));
+      p += dot(p, p + 45.32);
+      return fract(p.x * p.y);
+    }
+
+    float tri(float x) { return abs(fract(x) * 2.0 - 1.0); }
+    float tris(float x) { return 1.0 - smoothstep(0.0, 1.0, abs(2.0 * fract(x) - 1.0)); }
+    float trisn(float x) { return 2.0 * tris(x) - 1.0; }
+
+    vec3 hsv2rgb(vec3 c) {
+      vec4 K = vec4(1.0, 2.0/3.0, 1.0/3.0, 3.0);
+      vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+      return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+    }
+
+    float Star(vec2 uv, float flare) {
+      float d = length(uv);
+      float m = (0.05 * uGlowIntensity) / d;
+      float rays = smoothstep(0.0, 1.0, 1.0 - abs(uv.x * uv.y * 1000.0));
+      m += rays * flare * uGlowIntensity;
+      uv *= MAT45;
+      rays = smoothstep(0.0, 1.0, 1.0 - abs(uv.x * uv.y * 1000.0));
+      m += rays * 0.3 * flare * uGlowIntensity;
+      m *= smoothstep(1.0, 0.2, d);
+      return m;
+    }
+
+    vec3 StarLayer(vec2 uv) {
+      vec3 col = vec3(0.0);
+      vec2 gv = fract(uv) - 0.5;
+      vec2 id = floor(uv);
+      for (int y = -1; y <= 1; y++) {
+        for (int x = -1; x <= 1; x++) {
+          vec2 si = id + vec2(float(x), float(y));
+          float seed = Hash21(si);
+          float size = fract(seed * 345.32);
+          float glossLocal = tri(uStarSpeed / (3.0 * seed + 1.0));
+          float flareSize = smoothstep(0.9, 1.0, size) * glossLocal;
+          float red = smoothstep(0.2, 1.0, Hash21(si + 1.0)) + 0.2;
+          float blu = smoothstep(0.2, 1.0, Hash21(si + 3.0)) + 0.2;
+          float grn = min(red, blu) * seed;
+          vec3 base = vec3(red, grn, blu);
+          float hue = atan(base.g - base.r, base.b - base.r) / 6.2831 + 0.5;
+          hue = fract(hue + uHueShift / 360.0);
+          float sat = length(base - vec3(dot(base, vec3(0.299, 0.587, 0.114)))) * uSaturation;
+          float val = max(max(base.r, base.g), base.b);
+          base = hsv2rgb(vec3(hue, sat, val));
+          vec2 pad = vec2(tris(seed * 34.0 + uTime * uSpeed / 10.0), tris(seed * 38.0 + uTime * uSpeed / 30.0)) - 0.5;
+          float star = Star(gv - vec2(float(x), float(y)) - pad, flareSize);
+          float twinkle = trisn(uTime * uSpeed + seed * 6.2831) * 0.5 + 1.0;
+          twinkle = mix(1.0, twinkle, uTwinkleIntensity);
+          col += star * size * base * twinkle;
+        }
+      }
+      return col;
+    }
+
+    void main() {
+      vec2 focalPx = uFocal * uResolution.xy;
+      vec2 uv = (vUv * uResolution.xy - focalPx) / uResolution.y;
+      float angle = uTime * uRotationSpeed;
+      mat2 rot = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+      uv = rot * uv;
+      uv = mat2(uRotation.x, -uRotation.y, uRotation.y, uRotation.x) * uv;
+      vec3 col = vec3(0.0);
+      for (float i = 0.0; i < 1.0; i += 1.0 / NUM_LAYER) {
+        float depth = fract(i + uStarSpeed * uSpeed);
+        float scale = mix(20.0 * uDensity, 0.5 * uDensity, depth);
+        float fade = depth * smoothstep(1.0, 0.9, depth);
+        col += StarLayer(uv * scale + i * 453.32) * fade;
+      }
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+
+  function createShader(type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    return shader;
   }
 
-  // 显示选中的选项卡内容
-  const targetContent = document.getElementById(activeTabName);
-  if (targetContent) {
-    targetContent.classList.add('active');
+  const program = gl.createProgram();
+  gl.attachShader(program, createShader(gl.VERTEX_SHADER, vs));
+  gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(program);
+
+  const positions = new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]);
+  const uvs = new Float32Array([0,0, 1,0, 0,1, 0,1, 1,0, 1,1]);
+
+  const posBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+  const posLoc = gl.getAttribLocation(program, 'a_position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const uvBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
+  const uvLoc = gl.getAttribLocation(program, 'a_uv');
+  gl.enableVertexAttribArray(uvLoc);
+  gl.vertexAttribPointer(uvLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const u = {
+    uTime: gl.getUniformLocation(program, 'uTime'),
+    uResolution: gl.getUniformLocation(program, 'uResolution'),
+    uFocal: gl.getUniformLocation(program, 'uFocal'),
+    uRotation: gl.getUniformLocation(program, 'uRotation'),
+    uStarSpeed: gl.getUniformLocation(program, 'uStarSpeed'),
+    uDensity: gl.getUniformLocation(program, 'uDensity'),
+    uHueShift: gl.getUniformLocation(program, 'uHueShift'),
+    uSpeed: gl.getUniformLocation(program, 'uSpeed'),
+    uGlowIntensity: gl.getUniformLocation(program, 'uGlowIntensity'),
+    uSaturation: gl.getUniformLocation(program, 'uSaturation'),
+    uTwinkleIntensity: gl.getUniformLocation(program, 'uTwinkleIntensity'),
+    uRotationSpeed: gl.getUniformLocation(program, 'uRotationSpeed')
+  };
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    gl.viewport(0, 0, canvas.width, canvas.height);
   }
 
-  // 激活选中的选项卡
-  if (event && event.target) {
-    event.target.classList.add('active');
+  window.addEventListener('resize', resize);
+  resize();
+
+  gl.useProgram(program);
+
+  function render(time) {
+    time *= 0.001;
+    gl.uniform1f(u.uTime, time);
+    gl.uniform3f(u.uResolution, canvas.width, canvas.height, canvas.width / canvas.height);
+    gl.uniform2fv(u.uFocal, config.focal);
+    gl.uniform2fv(u.uRotation, config.rotation);
+    gl.uniform1f(u.uStarSpeed, time * config.starSpeed / 10);
+    gl.uniform1f(u.uDensity, config.density);
+    gl.uniform1f(u.uHueShift, config.hueShift);
+    gl.uniform1f(u.uSpeed, config.speed);
+    gl.uniform1f(u.uGlowIntensity, config.glowIntensity);
+    gl.uniform1f(u.uSaturation, config.saturation);
+    gl.uniform1f(u.uTwinkleIntensity, config.twinkleIntensity);
+    gl.uniform1f(u.uRotationSpeed, config.rotationSpeed);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    requestAnimationFrame(render);
   }
-}
 
-// Claude Code 选项卡切换
-function switchClaudeTab(tabName) {
-  switchTabGeneric('claude-tabs', ['claude-windows', 'claude-macos', 'claude-linux'], tabName);
-}
+  requestAnimationFrame(render);
+})();
 
-// CodeX 选项卡切换
-function switchCodexTab(tabName) {
-  switchTabGeneric('codex-tabs', ['windows', 'macos', 'linux'], tabName);
-}
-
-// Gemini CLI 选项卡切换
-function switchGeminiTab(tabName) {
-  switchTabGeneric('gemini-tabs', ['gemini-windows', 'gemini-macos', 'gemini-linux'], tabName);
-}
 
 /**
- * 功能描述: 复制代码到剪贴板
- * Args:
- *     btn (HTMLElement): 复制按钮元素
+ * Morphing Text Animation
+ * 文字变形效果 - CPASS / Claude / CodeX 循环
+ */
+(function() {
+  const elts = {
+    text1: document.getElementById("text1"),
+    text2: document.getElementById("text2")
+  };
+
+  const texts = ["CPASS", "Claude", "CodeX"];
+  const morphTime = 1.5;    // 变形时间（秒）
+  const cooldownTime = 0.5; // 默认冷却时间（秒）
+  const cpassCooldownTime = 2.0; // CPASS 冷却时间（4倍）
+
+  // 根据当前文字获取冷却时间
+  function getCooldownTime(index) {
+    return texts[index % texts.length] === "CPASS" ? cpassCooldownTime : cooldownTime;
+  }
+
+  let textIndex = texts.length - 1;
+  let time = new Date();
+  let morph = 0;
+  let cooldown = cooldownTime;
+
+  elts.text1.textContent = texts[textIndex % texts.length];
+  elts.text2.textContent = texts[(textIndex + 1) % texts.length];
+
+  function doMorph() {
+    morph -= cooldown;
+    cooldown = 0;
+
+    let fraction = morph / morphTime;
+    if (fraction > 1) {
+      // 使用下一个文字的冷却时间
+      cooldown = getCooldownTime(textIndex + 1);
+      fraction = 1;
+    }
+
+    setMorph(fraction);
+  }
+
+  function setMorph(fraction) {
+    elts.text2.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
+    elts.text2.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
+
+    fraction = 1 - fraction;
+    elts.text1.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
+    elts.text1.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
+  }
+
+  function doCooldown() {
+    morph = 0;
+    elts.text2.style.filter = "";
+    elts.text2.style.opacity = "100%";
+    elts.text1.style.filter = "";
+    elts.text1.style.opacity = "0%";
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    let newTime = new Date();
+    let shouldIncrementIndex = cooldown > 0;
+    let dt = (newTime - time) / 1000;
+    time = newTime;
+
+    cooldown -= dt;
+
+    if (cooldown <= 0) {
+      if (shouldIncrementIndex) {
+        textIndex++;
+        elts.text1.textContent = texts[textIndex % texts.length];
+        elts.text2.textContent = texts[(textIndex + 1) % texts.length];
+      }
+      doMorph();
+    } else {
+      doCooldown();
+    }
+  }
+
+  animate();
+})();
+
+
+/**
+ * 教程导航系统 - 工业风格版本
+ */
+let currentProduct = 'claude';
+let currentSystem = 'windows';
+
+function switchProduct(product) {
+  if (product === currentProduct) return;
+
+  currentProduct = product;
+
+  // 更新产品按钮状态
+  document.querySelectorAll('.product-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.product === product);
+  });
+
+  // 切换动画
+  const viewport = document.getElementById('content-viewport');
+  viewport.classList.add('warp-transition');
+  setTimeout(() => viewport.classList.remove('warp-transition'), 300);
+
+  updateContentPanel();
+}
+
+function switchSystem(system) {
+  if (system === currentSystem) return;
+
+  currentSystem = system;
+
+  // 更新系统按钮状态
+  document.querySelectorAll('.system-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.system === system);
+  });
+
+  updateContentPanel();
+}
+
+function updateContentPanel() {
+  const panelId = `panel-${currentProduct}-${currentSystem}`;
+
+  document.querySelectorAll('.content-panel').forEach(panel => {
+    panel.classList.toggle('active', panel.id === panelId);
+  });
+
+  // 滚动到顶部
+  document.getElementById('content-viewport').scrollTop = 0;
+}
+
+
+/**
+ * Step Toggle
+ */
+function toggleStep(header) {
+  const step = header.closest('.step');
+  step.classList.toggle('active');
+}
+
+
+/**
+ * Copy Code
  */
 function copyCode(btn) {
-  const codeBlock = btn.parentElement;
-  const code = codeBlock.querySelector('code');
-  const text = code.textContent;
+  const block = btn.closest('.code-block');
+  const code = block.querySelector('code').textContent;
 
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '已复制!';
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '已复制';
     btn.classList.add('copied');
-
     setTimeout(() => {
       btn.textContent = '复制';
       btn.classList.remove('copied');
     }, 2000);
-  }).catch(err => {
-    console.error('复制失败:', err);
   });
 }
 
-/**
- * 功能描述: 打字机效果
- */
-(function() {
-  const el = document.getElementById("subtitle");
-  const text = "一个小而美的 API 中转服务";
-  let i = 0;
-  el.textContent = "";
-
-  function tick() {
-    el.textContent = text.slice(0, i);
-    i++;
-    if (i <= text.length) {
-      setTimeout(tick, 65);
-    }
-  }
-
-  // 延迟启动，等待页面动画完成
-  setTimeout(tick, 500);
-})();
 
 /**
- * 功能描述: 滚动动画观察器
- * 使用 Intersection Observer 实现元素入场动画
+ * Scroll Reveal
  */
 (function() {
-  const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1
-  };
-
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
-        // 只触发一次动画
         observer.unobserve(entry.target);
       }
     });
-  }, observerOptions);
+  }, { threshold: 0.1 });
 
-  // 观察所有需要动画的元素
-  document.querySelectorAll('.animate-on-scroll').forEach(el => {
-    observer.observe(el);
-  });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 })();
 
-/**
- * 功能描述: 卡片鼠标追踪光效
- */
-(function() {
-  const cards = document.querySelectorAll('.card, .group-item');
-
-  cards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      card.style.setProperty('--mouse-x', `${x}px`);
-      card.style.setProperty('--mouse-y', `${y}px`);
-    });
-  });
-})();
 
 /**
- * 功能描述: 粒子背景系统（带连线效果）
- */
-(function() {
-  const canvas = document.getElementById("particles-bg");
-  const ctx = canvas.getContext("2d");
-  let w, h, particles = [];
-
-  // 粒子配置
-  const CONFIG = {
-    particleCount: 80,
-    particleMinRadius: 0.5,
-    particleMaxRadius: 2,
-    particleSpeed: 0.3,
-    lineDistance: 120,
-    lineWidth: 0.5
-  };
-
-  /**
-   * 功能描述: 调整画布大小并重新初始化粒子
-   */
-  function resize() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-    initParticles();
-  }
-
-  /**
-   * 功能描述: 初始化粒子数组
-   */
-  function initParticles() {
-    particles = [];
-    for (let i = 0; i < CONFIG.particleCount; i++) {
-      particles.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * CONFIG.particleSpeed,
-        vy: (Math.random() - 0.5) * CONFIG.particleSpeed,
-        r: Math.random() * (CONFIG.particleMaxRadius - CONFIG.particleMinRadius) + CONFIG.particleMinRadius,
-        // 随机颜色（青色或紫色）
-        color: Math.random() > 0.5 ? 'rgba(0, 245, 255, 0.7)' : 'rgba(168, 85, 247, 0.6)'
-      });
-    }
-  }
-
-  /**
-   * 功能描述: 计算两点之间的距离
-   */
-  function getDistance(p1, p2) {
-    return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
-  }
-
-  /**
-   * 功能描述: 主绘制循环
-   */
-  function draw() {
-    ctx.clearRect(0, 0, w, h);
-
-    // 更新和绘制粒子
-    particles.forEach((p, i) => {
-      // 更新位置
-      p.x += p.vx;
-      p.y += p.vy;
-
-      // 边界检测（循环）
-      if (p.x < 0) p.x = w;
-      if (p.x > w) p.x = 0;
-      if (p.y < 0) p.y = h;
-      if (p.y > h) p.y = 0;
-
-      // 绘制粒子
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.fill();
-
-      // 绘制连线
-      for (let j = i + 1; j < particles.length; j++) {
-        const p2 = particles[j];
-        const dist = getDistance(p, p2);
-
-        if (dist < CONFIG.lineDistance) {
-          const opacity = (1 - dist / CONFIG.lineDistance) * 0.3;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.strokeStyle = `rgba(56, 189, 248, ${opacity})`;
-          ctx.lineWidth = CONFIG.lineWidth;
-          ctx.stroke();
-        }
-      }
-    });
-
-    requestAnimationFrame(draw);
-  }
-
-  // 初始化
-  resize();
-  draw();
-  window.addEventListener('resize', resize);
-})();
-
-/**
- * 功能描述: 平滑滚动到锚点
+ * Smooth Scroll
  */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function(e) {
+  anchor.addEventListener('click', e => {
     e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
+    const target = document.querySelector(anchor.getAttribute('href'));
     if (target) {
-      target.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
 });
+</script>
+
+<!-- VaporizeTextCycle 文字蒸发动画 -->
+<script>
+/**
+ * VaporizeTextCycle - 纯 JavaScript/Canvas 实现
+ * 文字蒸发循环动画效果
+ */
+(function() {
+  // 配置参数
+  const config = {
+    texts: ["一个", "小而美的", "API 中转服务"],
+    font: {
+      fontFamily: "Inter, sans-serif",
+      fontSize: "40px",
+      fontWeight: 600
+    },
+    color: "rgb(255, 255, 255)",
+    spread: 5,
+    density: 5,
+    animation: {
+      vaporizeDuration: 1,
+      fadeInDuration: 0.5,
+      waitDuration: 0.25
+    },
+    direction: "left-to-right",
+    alignment: "center"
+  };
+
+  // 状态变量
+  let canvas, ctx, wrapper;
+  let particles = [];
+  let currentTextIndex = 0;
+  let animationState = "static"; // static | vaporizing | fadingIn | waiting
+  let vaporizeProgress = 0;
+  let fadeOpacity = 0;
+  let textBoundaries = null;
+  let isInView = false;
+  let animationFrameId = null;
+  let lastTime = performance.now();
+
+  // 计算设备像素比
+  const globalDpr = (typeof window !== 'undefined' ? window.devicePixelRatio * 1.5 : 1) || 1;
+
+  // 动画持续时间（毫秒）
+  const VAPORIZE_DURATION = config.animation.vaporizeDuration * 1000;
+  const FADE_IN_DURATION = config.animation.fadeInDuration * 1000;
+  const WAIT_DURATION = config.animation.waitDuration * 1000;
+
+  // 密度转换
+  const transformedDensity = transformValue(config.density, [0, 10], [0.3, 1], true);
+
+  /**
+   * 数值范围映射
+   */
+  function transformValue(input, inputRange, outputRange, clamp) {
+    const [inputMin, inputMax] = inputRange;
+    const [outputMin, outputMax] = outputRange;
+
+    const progress = (input - inputMin) / (inputMax - inputMin);
+    let result = outputMin + progress * (outputMax - outputMin);
+
+    if (clamp) {
+      if (outputMax > outputMin) {
+        result = Math.min(Math.max(result, outputMin), outputMax);
+      } else {
+        result = Math.min(Math.max(result, outputMax), outputMin);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * 解析颜色字符串
+   */
+  function parseColor(color) {
+    const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    const rgbaMatch = color.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+
+    if (rgbaMatch) {
+      const [_, r, g, b, a] = rgbaMatch;
+      return `rgba(${r}, ${g}, ${b}, ${a})`;
+    } else if (rgbMatch) {
+      const [_, r, g, b] = rgbMatch;
+      return `rgba(${r}, ${g}, ${b}, 1)`;
+    }
+
+    return "rgba(255, 255, 255, 1)";
+  }
+
+  /**
+   * 根据字体大小计算扩散系数
+   */
+  function calculateVaporizeSpread(fontSize) {
+    const size = typeof fontSize === "string" ? parseInt(fontSize) : fontSize;
+
+    const points = [
+      { size: 20, spread: 0.2 },
+      { size: 50, spread: 0.5 },
+      { size: 100, spread: 1.5 }
+    ];
+
+    if (size <= points[0].size) return points[0].spread;
+    if (size >= points[points.length - 1].size) return points[points.length - 1].spread;
+
+    let i = 0;
+    while (i < points.length - 1 && points[i + 1].size < size) i++;
+
+    const p1 = points[i];
+    const p2 = points[i + 1];
+
+    return p1.spread + (size - p1.size) * (p2.spread - p1.spread) / (p2.size - p1.size);
+  }
+
+  // 计算扩散参数
+  const fontSize = parseInt(config.font.fontSize.replace("px", ""));
+  const VAPORIZE_SPREAD = calculateVaporizeSpread(fontSize);
+  const MULTIPLIED_VAPORIZE_SPREAD = VAPORIZE_SPREAD * config.spread;
+
+  /**
+   * 从文本创建粒子
+   */
+  function createParticles(text) {
+    const newParticles = [];
+    const width = wrapper.clientWidth;
+    const height = wrapper.clientHeight;
+
+    // 设置 Canvas 尺寸
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    canvas.width = Math.floor(width * globalDpr);
+    canvas.height = Math.floor(height * globalDpr);
+
+    // 设置文本样式
+    const font = `${config.font.fontWeight} ${fontSize * globalDpr}px ${config.font.fontFamily}`;
+    const color = parseColor(config.color);
+
+    // 计算文本位置
+    let textX;
+    const textY = canvas.height / 2;
+
+    if (config.alignment === "center") {
+      textX = canvas.width / 2;
+    } else if (config.alignment === "left") {
+      textX = 0;
+    } else {
+      textX = canvas.width;
+    }
+
+    // 清除画布
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 设置文本属性
+    ctx.fillStyle = color;
+    ctx.font = font;
+    ctx.textAlign = config.alignment;
+    ctx.textBaseline = "middle";
+    ctx.imageSmoothingQuality = "high";
+    ctx.imageSmoothingEnabled = true;
+
+    // 计算文本边界
+    const metrics = ctx.measureText(text);
+    let textLeft;
+    const textWidth = metrics.width;
+
+    if (config.alignment === "center") {
+      textLeft = textX - textWidth / 2;
+    } else if (config.alignment === "left") {
+      textLeft = textX;
+    } else {
+      textLeft = textX - textWidth;
+    }
+
+    textBoundaries = {
+      left: textLeft,
+      right: textLeft + textWidth,
+      width: textWidth
+    };
+
+    // 渲染文本用于采样
+    ctx.fillText(text, textX, textY);
+
+    // 采样像素
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    // 计算采样率
+    const baseDPR = 3;
+    const currentDPR = canvas.width / parseInt(canvas.style.width);
+    const sampleRate = Math.max(1, Math.round(currentDPR / baseDPR));
+
+    // 采样文本像素创建粒子
+    for (let y = 0; y < canvas.height; y += sampleRate) {
+      for (let x = 0; x < canvas.width; x += sampleRate) {
+        const index = (y * canvas.width + x) * 4;
+        const alpha = data[index + 3];
+
+        if (alpha > 0) {
+          const originalAlpha = alpha / 255 * (sampleRate / currentDPR);
+          newParticles.push({
+            x,
+            y,
+            originalX: x,
+            originalY: y,
+            color: `rgba(${data[index]}, ${data[index + 1]}, ${data[index + 2]}, ${originalAlpha})`,
+            opacity: originalAlpha,
+            originalAlpha,
+            velocityX: 0,
+            velocityY: 0,
+            angle: 0,
+            speed: 0,
+            shouldFadeQuickly: false
+          });
+        }
+      }
+    }
+
+    // 清除画布
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    return newParticles;
+  }
+
+  /**
+   * 更新粒子状态
+   */
+  function updateParticles(vaporizeX, deltaTime) {
+    let allParticlesVaporized = true;
+
+    particles.forEach(particle => {
+      const shouldVaporize = config.direction === "left-to-right"
+        ? particle.originalX <= vaporizeX
+        : particle.originalX >= vaporizeX;
+
+      if (shouldVaporize) {
+        // 初始化粒子运动
+        if (particle.speed === 0) {
+          particle.angle = Math.random() * Math.PI * 2;
+          particle.speed = (Math.random() * 1 + 0.5) * MULTIPLIED_VAPORIZE_SPREAD;
+          particle.velocityX = Math.cos(particle.angle) * particle.speed;
+          particle.velocityY = Math.sin(particle.angle) * particle.speed;
+          particle.shouldFadeQuickly = Math.random() > transformedDensity;
+        }
+
+        if (particle.shouldFadeQuickly) {
+          particle.opacity = Math.max(0, particle.opacity - deltaTime);
+        } else {
+          // 应用粒子物理
+          const dx = particle.originalX - particle.x;
+          const dy = particle.originalY - particle.y;
+          const distanceFromOrigin = Math.sqrt(dx * dx + dy * dy);
+
+          const dampingFactor = Math.max(0.95, 1 - distanceFromOrigin / (100 * MULTIPLIED_VAPORIZE_SPREAD));
+
+          const randomSpread = MULTIPLIED_VAPORIZE_SPREAD * 3;
+          const spreadX = (Math.random() - 0.5) * randomSpread;
+          const spreadY = (Math.random() - 0.5) * randomSpread;
+
+          particle.velocityX = (particle.velocityX + spreadX + dx * 0.002) * dampingFactor;
+          particle.velocityY = (particle.velocityY + spreadY + dy * 0.002) * dampingFactor;
+
+          const maxVelocity = MULTIPLIED_VAPORIZE_SPREAD * 2;
+          const currentVelocity = Math.sqrt(particle.velocityX * particle.velocityX + particle.velocityY * particle.velocityY);
+
+          if (currentVelocity > maxVelocity) {
+            const scale = maxVelocity / currentVelocity;
+            particle.velocityX *= scale;
+            particle.velocityY *= scale;
+          }
+
+          particle.x += particle.velocityX * deltaTime * 20;
+          particle.y += particle.velocityY * deltaTime * 10;
+
+          const baseFadeRate = 0.25;
+          const durationBasedFadeRate = baseFadeRate * (2000 / VAPORIZE_DURATION);
+
+          particle.opacity = Math.max(0, particle.opacity - deltaTime * durationBasedFadeRate);
+        }
+
+        if (particle.opacity > 0.01) {
+          allParticlesVaporized = false;
+        }
+      } else {
+        allParticlesVaporized = false;
+      }
+    });
+
+    return allParticlesVaporized;
+  }
+
+  /**
+   * 渲染粒子
+   */
+  function renderParticles() {
+    ctx.save();
+    ctx.scale(globalDpr, globalDpr);
+
+    particles.forEach(particle => {
+      if (particle.opacity > 0) {
+        const color = particle.color.replace(/[\d.]+\)$/, `${particle.opacity})`);
+        ctx.fillStyle = color;
+        ctx.fillRect(particle.x / globalDpr, particle.y / globalDpr, 1, 1);
+      }
+    });
+
+    ctx.restore();
+  }
+
+  /**
+   * 重置粒子状态
+   */
+  function resetParticles() {
+    particles.forEach(particle => {
+      particle.x = particle.originalX;
+      particle.y = particle.originalY;
+      particle.opacity = particle.originalAlpha;
+      particle.speed = 0;
+      particle.velocityX = 0;
+      particle.velocityY = 0;
+    });
+  }
+
+  /**
+   * 动画循环
+   */
+  function animate(currentTime) {
+    if (!isInView) {
+      animationFrameId = requestAnimationFrame(animate);
+      return;
+    }
+
+    const deltaTime = (currentTime - lastTime) / 1000;
+    lastTime = currentTime;
+
+    if (!canvas || !ctx || particles.length === 0) {
+      animationFrameId = requestAnimationFrame(animate);
+      return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    switch (animationState) {
+      case "static":
+        renderParticles();
+        break;
+
+      case "vaporizing":
+        vaporizeProgress += deltaTime * 100 / (VAPORIZE_DURATION / 1000);
+
+        if (textBoundaries) {
+          const progress = Math.min(100, vaporizeProgress);
+          const vaporizeX = config.direction === "left-to-right"
+            ? textBoundaries.left + textBoundaries.width * progress / 100
+            : textBoundaries.right - textBoundaries.width * progress / 100;
+
+          const allVaporized = updateParticles(vaporizeX, deltaTime);
+          renderParticles();
+
+          if (vaporizeProgress >= 100 && allVaporized) {
+            currentTextIndex = (currentTextIndex + 1) % config.texts.length;
+            animationState = "fadingIn";
+            fadeOpacity = 0;
+            // 创建新文本的粒子
+            particles = createParticles(config.texts[currentTextIndex]);
+          }
+        }
+        break;
+
+      case "fadingIn":
+        fadeOpacity += deltaTime * 1000 / FADE_IN_DURATION;
+
+        ctx.save();
+        ctx.scale(globalDpr, globalDpr);
+        particles.forEach(particle => {
+          particle.x = particle.originalX;
+          particle.y = particle.originalY;
+          const opacity = Math.min(fadeOpacity, 1) * particle.originalAlpha;
+          const color = particle.color.replace(/[\d.]+\)$/, `${opacity})`);
+          ctx.fillStyle = color;
+          ctx.fillRect(particle.x / globalDpr, particle.y / globalDpr, 1, 1);
+        });
+        ctx.restore();
+
+        if (fadeOpacity >= 1) {
+          animationState = "waiting";
+          setTimeout(() => {
+            animationState = "vaporizing";
+            vaporizeProgress = 0;
+            resetParticles();
+          }, WAIT_DURATION);
+        }
+        break;
+
+      case "waiting":
+        renderParticles();
+        break;
+    }
+
+    animationFrameId = requestAnimationFrame(animate);
+  }
+
+  /**
+   * 初始化
+   */
+  function init() {
+    wrapper = document.getElementById('vaporize-text-container');
+    canvas = document.getElementById('vaporize-canvas');
+
+    if (!wrapper || !canvas) return;
+
+    ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // 设置可见性观察器
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isInView = entry.isIntersecting;
+        if (isInView && animationState === "static") {
+          setTimeout(() => {
+            animationState = "vaporizing";
+          }, 0);
+        }
+      },
+      { threshold: 0, rootMargin: '50px' }
+    );
+
+    observer.observe(wrapper);
+
+    // 初始渲染
+    renderCanvas();
+
+    // 监听窗口大小变化
+    const resizeObserver = new ResizeObserver(() => {
+      renderCanvas();
+    });
+    resizeObserver.observe(wrapper);
+
+    // 启动动画循环
+    animationFrameId = requestAnimationFrame(animate);
+  }
+
+  /**
+   * 渲染 Canvas
+   */
+  function renderCanvas() {
+    if (!wrapper || !canvas || !ctx) return;
+
+    const currentText = config.texts[currentTextIndex];
+    particles = createParticles(currentText);
+  }
+
+  // DOM 加载完成后初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
 </script>
 
 </body>
