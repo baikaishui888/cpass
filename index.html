@@ -6,7 +6,7 @@
 <title>Cpass - Galaxy Network</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
   /* ========================================
@@ -124,15 +124,19 @@
       radial-gradient(ellipse 100% 100% at 50% -20%, transparent 50%, var(--void) 100%);
   }
 
-  /* 星云光斑效果 */
+  /* 星云光斑效果 - 已优化性能 */
   .nebula-orb {
     position: fixed;
     border-radius: 50%;
-    filter: blur(100px);
+    filter: blur(60px);  /* 降低模糊半径以提升性能 */
     z-index: 0;
     opacity: 0.3;
     pointer-events: none;
     animation: float 20s infinite alternate ease-in-out;
+    /* GPU 加速优化 */
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
   .orb-1 {
     width: 500px; height: 500px;
@@ -2849,7 +2853,7 @@ codex</code>
     uniform float uRotationSpeed;
     varying vec2 vUv;
 
-    #define NUM_LAYER 4.0
+    #define NUM_LAYER 2.0
     #define MAT45 mat2(0.7071, -0.7071, 0.7071, 0.7071)
 
     float Hash21(vec2 p) {
@@ -2973,7 +2977,7 @@ codex</code>
   };
 
   function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);  /* 限制 DPR 上限以提升性能 */
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
     gl.viewport(0, 0, canvas.width, canvas.height);
@@ -2984,7 +2988,15 @@ codex</code>
 
   gl.useProgram(program);
 
+  // 页面可见性检测 - 不可见时暂停渲染以节省资源
+  let isPageVisible = true;
+  document.addEventListener('visibilitychange', () => {
+    isPageVisible = !document.hidden;
+    if (isPageVisible) requestAnimationFrame(render);
+  });
+
   function render(time) {
+    if (!isPageVisible) return;  // 页面不可见时停止渲染
     time *= 0.001;
     gl.uniform1f(u.uTime, time);
     gl.uniform3f(u.uResolution, canvas.width, canvas.height, canvas.width / canvas.height);
@@ -3239,8 +3251,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   let animationFrameId = null;
   let lastTime = performance.now();
 
-  // 计算设备像素比
-  const globalDpr = (typeof window !== 'undefined' ? window.devicePixelRatio * 1.5 : 1) || 1;
+  // 计算设备像素比 - 限制上限以提升性能
+  const globalDpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
   // 动画持续时间（毫秒）
   const VAPORIZE_DURATION = config.animation.vaporizeDuration * 1000;
